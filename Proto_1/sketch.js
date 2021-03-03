@@ -1,7 +1,13 @@
 function setup(){
-createCanvas(400,400);
+   if(windowWidth>windowHeight){
+    createCanvas(windowHeight,windowHeight);
+   } else{
+    createCanvas(windowWidth,windowWidth);
+   }
+
 }
 
 function draw(){
-    background(frameCount%255);
+    background(245);
+    
 }
