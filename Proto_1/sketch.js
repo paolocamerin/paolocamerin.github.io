@@ -1,20 +1,77 @@
-
+let cnv;
+let mouseActive = false;
 let repetitions = 1;
 let mainG ;
 let tempG ;
-let shp = 0; 
+let shp = "none"; 
 let offX = offY = ang = 0;
 let offsetIncrement = 30;
 let originX,originY;
+let rs;
+let xOffsetSlects = 0; 
+let saveButton;
+
+let shapesNames =["none","circle","square","point"];
+
+//Colours
+let colours ;
+let colourNames =["Red","Orange","Yellow","Light green","Dark green","Light blue","Dark blue","Black","Random"];
+let selectedColour;
+let randomColours = true;
+let fixed = true;
+
 function setup(){
-    createCanvas(windowWidth,windowHeight);
+    cnv = createCanvas(windowWidth,windowHeight);
+
+    cnv.mouseOut(function() {
+        mouseActive = false;
+      });
+      cnv.mouseOver(function() {
+        mouseActive = true;
+      });
+
+    colours =[color("#FF6D8F"),color("#FFB36D"),color("#FFDF6D"),color("#BAF794"),color("#49D8BE"),color("#94C2F7"),color("#4987D8"),color("#606060")];
+    selectedColour = colours[colours.length-1];
     mainG = createGraphics(width,height);
-    tempG = createGraphics(400,400);
+    tempG = createGraphics(width,height);
     mainG.imageMode(CENTER);
     mainG.strokeWeight(5);
     mainG.noFill();
-    mainG.stroke(21);
+    mainG.stroke(selectedColour);
     
+    saveButton = createButton("Save ✏️");
+    saveButton.position(width-saveButton.width*2,20);
+    saveButton.mousePressed(saveDrawing);
+ 
+
+    repeatSelect = createSelect();
+    repeatSelect.position(xOffsetSlects+=100, 20);
+    for(let i = 0;i < 21; i++){
+        repeatSelect.option(i);
+    }
+    repeatSelect.selected(1);
+    repeatSelect.changed(repetitionsSelectEvent);
+
+
+    colourSelect = createSelect();
+    colourSelect.position(xOffsetSlects+=100, 20);
+    for(let i = 0;i < colourNames.length; i++){
+        colourSelect.option(colourNames[i]);
+    }
+    colourSelect.selected("Black");
+    colourSelect.changed(colourSelectionEvent);
+
+
+
+    shapeSelect = createSelect();
+    shapeSelect.position(xOffsetSlects+=100, 20);
+    for(let i = 0;i < shapesNames.length; i++){
+        shapeSelect.option(shapesNames[i]);
+    }
+    //shapeSelect.selected("none");
+    shapeSelect.changed(shapeSelectionEvent);
+
+
     originX = mainG.width/2;
     originY = mainG.height/2;
     //updateDrawing();
@@ -25,6 +82,7 @@ function setup(){
 function draw(){
 background(245);
 
+image(tempG,0,0,width,height);
 image(mainG,0,0,width,height);
 }
 
@@ -34,26 +92,37 @@ mainG.clear();
     mainG.translate(originX,originY);
     for(let i = 0 ; i < repetitions; i++){
         
-        
+        if(randomColours ){
+            randomSeed((rs+i)*10000);
+            mainG.stroke(colours[floor(random(colours.length))]);
+           
+        }else{
+            mainG.stroke(selectedColour);
+        }
         mainG.rotate(ang);
+
         if(i!=0){
             mainG.translate(offX,offY);  
         }
         
-        
-        mainG.ellipse(0,0,200,200);
+        drawShape(shp);
+       
     
     }
+    
 
     mainG.pop();
 
 
 }
 
-function mousePressed(){
-    originX = mouseX;
-    originY = mouseY;  
-    updateDrawing();
+function mouseDragged(){
+    if(mouseActive){
+        originX = mouseX;
+        originY = mouseY;  
+        updateDrawing();
+    }
+    
 }
 function keyPressed(){
    
@@ -87,49 +156,74 @@ function keyPressed(){
     }
 
     if(key == 'r'){
-        ang +=0.2;
+        ang +=PI/20;
         ang = constrain(ang, -TAU, TAU);
 
     }
 
     if(key == 'e'){
-        ang -=0.2;
+        ang -=PI/20;
         ang = constrain(ang, -TAU, TAU);
 
     }
     updateDrawing();
 
 }
-function drawShape(){
-    tempG.clear();
+function drawShape(sh){
+    //tempG.clear();
     //tempG.translate(tempG.width/2,tempG.height/2);
-    switch (shp){
-            case 0:
+    switch (sh){
+            case "none":
+            break;
+            case "circle":
                 //draw circle
-                tempG.ellipse(0,0,tempG.width,tempG.height);
+                mainG.ellipse(0,0,200,200);
             break;
-            case 1:
+            case "square":
                 //draw square
+                mainG.rectMode(CENTER);
+                mainG.rect(0,0,200,200);
             break;
-            case 2:
+            case "point":
                 //draw point
+                mainG.point(0,0);
             break;
-            case 3:
-            break;
-            case 4:
-            break;
-            case 5:
-            break;
-            case 6:
-            break;
-            case 7:
-            break;
-            case 8:
-            break;
-            case 9:
-            break;
+            
 
     }
 
   
 }
+
+function repetitionsSelectEvent() {
+   repetitions = repeatSelect.value();
+   updateDrawing();
+}
+
+function shapeSelectionEvent() {
+    shp = shapeSelect.value();
+    updateDrawing();
+ }
+
+
+ function colourSelectionEvent() {
+     if(colourSelect.value() == "Random"){
+        randomColours = true;
+        rs = random(122222);
+     }else{
+        randomColours = false;
+        selectedColour = colours[colourNames.indexOf(colourSelect.value())];
+    }
+    
+    print(colourSelect.value());
+    print(colourNames.indexOf(colourSelect.value()));
+    print(selectedColour);
+    updateDrawing();
+ }
+
+ function saveDrawing(){
+  tempG.image(mainG,0,0,width,height);
+  shapeSelect.selected("none");
+  shp = shapeSelect.value();
+
+ }
