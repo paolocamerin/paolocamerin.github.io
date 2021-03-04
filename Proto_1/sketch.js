@@ -15,13 +15,13 @@ let rs;
 let xOffsetSlects = 0; 
 let saveButton;
 
-let shapesNames =["none","circle","square","point"];
+let shapesNames =["none","circle","square","triangle","point"];
 
 //Colours
 let colours ;
 let colourNames =["Red","Orange","Yellow","Light green","Dark green","Light blue","Dark blue","Black","Random"];
 let selectedColour;
-let randomColours = true;
+let randomColours = false;
 let fixed = true;
 
 
@@ -48,6 +48,12 @@ function setup(){
     saveButton.position(width-saveButton.width*2,20);
     saveButton.mousePressed(saveDrawing);
  
+    deleteButton = createButton("Delete ❌");
+    deleteButton.position(width-saveButton.width*4,20);
+    deleteButton.mousePressed(function(){
+        images =[];
+        mainG.clear();
+    });
 
     repeatSelect = createSelect();
     repeatSelect.position(xOffsetSlects+=30, 20);
@@ -176,7 +182,7 @@ translate(width/2,height/2);
 //rotate(frameCount/100);
 
 for(let i of images){
-    print(i.width);
+    //print(i.width);
     image(i,0,0,i.width,i.height);
 }
 //image(tempG,0,0,tempG.width,tempG.height);
@@ -236,6 +242,20 @@ function drawShape(sh){
                 mainG.rectMode(CENTER);
                 mainG.rect(0,0,dimension,dimension);
             break;
+
+            case "triangle":
+                //draw square
+                
+                mainG.beginShape();
+                for(let i = 0; i < 3; i++){
+                    mainG.vertex((dimension/2)*cos(map(i,0,3,0,TAU)),(dimension/2)*sin(map(i,0,3,0,TAU)));
+                }
+                mainG.endShape(CLOSE)
+                
+                print("triangle");
+
+            break;
+
             case "point":
                 //draw point
                 mainG.strokeWeight(10);
