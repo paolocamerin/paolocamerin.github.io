@@ -5,8 +5,9 @@ let mainG ;
 let tempG ;
 let images = [];
 let shp = "none"; 
+let targetAng = 0; 
+let offX = offY = ang = targetOffX = targetOffY = 0;
 
-let offX = offY = ang = 0;
 let offsetIncrement = 30;
 let originX,originY;
 let angIncrement;
@@ -15,7 +16,7 @@ let rs;
 let xOffsetSlects = 0; 
 let saveButton;
 
-let shapesNames =["none","circle","square","triangle","point"];
+let shapesNames =["none","ellipse","circle","square","triangle","line","point"];
 
 //Colours
 let colours ;
@@ -52,6 +53,13 @@ function setup(){
     deleteButton.position(width-saveButton.width*4,20);
     deleteButton.mousePressed(function(){
         images =[];
+        //offX =0;
+        //offY =0;
+        targetOffX =0;
+        targetOffY =0;
+        shapeSelect.selected("none");
+        shapeSelectionEvent();
+        targetAng = 0;
         mainG.clear();
     });
 
@@ -69,7 +77,8 @@ function setup(){
     buttonUp.position(xOffsetSlects+=150, 20);
     buttonUp.size(70,20);
     buttonUp.mousePressed(function (){
-        offY-=offsetIncrement;
+        //offY-=offsetIncrement;
+        targetOffY-=offsetIncrement;
         print("Move UP");
         updateDrawing();
     });
@@ -78,7 +87,8 @@ function setup(){
     buttonDown.position(xOffsetSlects, 70);
     buttonDown.size(70,20);
     buttonDown.mousePressed(function (){
-        offY+=offsetIncrement;
+       // offY+=offsetIncrement;
+        targetOffY+=offsetIncrement;
         print("Move DOWN");
         updateDrawing();
     });
@@ -88,7 +98,8 @@ function setup(){
     buttonLeft.position(xOffsetSlects-50, 45);
     buttonLeft.size(70,20);
     buttonLeft.mousePressed(function (){
-        offX-=offsetIncrement;
+        //offX-=offsetIncrement;
+        targetOffX-=offsetIncrement;
         print("Move LEFT");
         updateDrawing();
     });
@@ -97,8 +108,10 @@ function setup(){
     resetMove.size(170,20);
     resetMove.position(xOffsetSlects-50, 100);
     resetMove.mousePressed(function (){
-        offX =0;
-        offY =0;
+        //offX =0;
+        //offY =0;
+        targetOffX =0;
+        targetOffY =0;
         print("Reset move");
         updateDrawing();
     });
@@ -107,7 +120,8 @@ function setup(){
     buttonRight.position(xOffsetSlects+=50, 45);
     buttonRight.size(70,20);
     buttonRight.mousePressed(function (){
-        offX+=offsetIncrement;
+        //offX+=offsetIncrement;
+        targetOffX+=offsetIncrement;
         print("Move RIGHT");
         updateDrawing();
     });
@@ -116,7 +130,7 @@ function setup(){
     rotateLeft.position(xOffsetSlects+=100, 30);
     //rotateLeft.size(70,20);
     rotateLeft.mousePressed(function (){
-        ang-=angIncrement;
+        targetAng-=angIncrement;
         print("Rotate Left");
         updateDrawing();
     });
@@ -125,7 +139,7 @@ function setup(){
     resetRotate.position(xOffsetSlects, 70);
     //rotateLeft.size(70,20);
     resetRotate.mousePressed(function (){
-        ang=0;
+        targetAng=0;
         print("Reset rotate");
         updateDrawing();
     });
@@ -135,7 +149,7 @@ function setup(){
     rotateRight.position(xOffsetSlects+=50, 30);
     //rotateRight.size(70,20);
     rotateRight.mousePressed(function (){
-        ang+=angIncrement;
+        targetAng+=angIncrement;
         print("Rotate Right");
         updateDrawing();
     });
@@ -157,7 +171,7 @@ function setup(){
     for(let i = 0;i < shapesNames.length; i++){
         shapeSelect.option(shapesNames[i]);
     }
-    //shapeSelect.selected("none");
+    shapeSelect.selected("none");
     shapeSelect.changed(shapeSelectionEvent);
     imageMode(CENTER);
 
@@ -180,7 +194,9 @@ function draw(){
 background(245);
 translate(width/2,height/2);
 //rotate(frameCount/100);
-
+ang = lerp(ang,targetAng,0.1);
+offX = lerp(offX,targetOffX,0.1);
+offY = lerp(offY,targetOffY,0.1);
 for(let i of images){
     //print(i.width);
     image(i,0,0,i.width,i.height);
@@ -188,6 +204,7 @@ for(let i of images){
 //image(tempG,0,0,tempG.width,tempG.height);
 image(mainG,0,0,mainG.width,mainG.height);
 
+updateDrawing();
 
 }
 
@@ -233,6 +250,10 @@ function drawShape(sh){
     switch (sh){
             case "none":
             break;
+            case "ellipse":
+                //draw circle
+                mainG.ellipse(0,0,dimension,dimension*0.7);
+            break;
             case "circle":
                 //draw circle
                 mainG.ellipse(0,0,dimension,dimension);
@@ -254,6 +275,12 @@ function drawShape(sh){
                 
                 print("triangle");
 
+            break;
+
+            case "line":
+                //draw point
+                mainG.strokeWeight(5);
+                mainG.line(-dimension/2,0,dimension/2,0);
             break;
 
             case "point":
@@ -335,43 +362,43 @@ function shapeSelectionEvent() {
 function keyPressed(){
    
     if(keyCode == UP_ARROW){
-        offY-=offsetIncrement;
+        targetOffY-=offsetIncrement;
 
     }
     if(keyCode == DOWN_ARROW){
-        offY+=offsetIncrement;
+        targetOffY+=offsetIncrement;
         
     }
     if(keyCode == LEFT_ARROW){
-        offX-=offsetIncrement;
+        targetOffX-=offsetIncrement;
         
     }
     if(keyCode == RIGHT_ARROW){
-        offX+=offsetIncrement;
+    targetOffX+=offsetIncrement;
         
     }
 
     if(key == '2'){
         repetitions ++;
-        repetitions = constrain(repetitions, 0, 20);
+        repetitions = constrain(repetitions, 0, 100);
 
     }
 
     if(key == '1'){
         repetitions --;
-        repetitions = constrain(repetitions, 0, 20);
+        repetitions = constrain(repetitions, 0, 100);
 
     }
 
     if(key == 'r'){
-        ang +=angIncrement;
-        ang = constrain(ang, -TAU, TAU);
+        targetAng += angIncrement;
+        targetAng = constrain(targetAng, -TAU, TAU);
 
     }
 
     if(key == 'e'){
-        ang -=angIncrement;
-        ang = constrain(ang, -TAU, TAU);
+        targetAng -=angIncrement;
+        targetAng = constrain(targetAng, -TAU, TAU);
 
     }
     updateDrawing();
