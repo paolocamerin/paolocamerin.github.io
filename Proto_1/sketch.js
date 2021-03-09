@@ -7,7 +7,7 @@ let images = [];
 let shp = "none"; 
 let targetAng = 0; 
 let offX = offY = ang = targetOffX = targetOffY = 0;
-
+let globalXoff = globalYoff = 0; 
 let offsetIncrement = 30;
 let originX,originY;
 let angIncrement;
@@ -35,7 +35,7 @@ function setup(){
       cnv.mouseOver(function() {
         mouseActive = true;
       });
-    angIncrement = PI/8;
+    angIncrement = PI/40;
     colours =[color("#FF6D8F"),color("#FFB36D"),color("#FFDF6D"),color("#BAF794"),color("#49D8BE"),color("#94C2F7"),color("#4987D8"),color("#606060")];
     selectedColour = colours[colours.length-1];
     mainG = createGraphics(width,height);
@@ -192,15 +192,16 @@ function setup(){
 
 function draw(){
 background(245);
-translate(width/2,height/2);
+
 //rotate(frameCount/100);
 ang = lerp(ang,targetAng,0.1);
 offX = lerp(offX,targetOffX,0.1);
 offY = lerp(offY,targetOffY,0.1);
 for(let i of images){
     //print(i.width);
-    image(i,0,0,i.width,i.height);
+    image(i,width/2,height/2,i.width,i.height);
 }
+translate(width/2,height/2);
 //image(tempG,0,0,tempG.width,tempG.height);
 image(mainG,0,0,mainG.width,mainG.height);
 
@@ -216,7 +217,7 @@ updateDrawing();
 function updateDrawing(){
 mainG.clear();
     mainG.push(); 
-    mainG.translate(originX,originY);
+    mainG.translate(originX+globalXoff,originY+globalYoff);
     for(let i = 0 ; i < repetitions; i++){
         
         if(randomColours ){
@@ -331,7 +332,8 @@ function shapeSelectionEvent() {
   
   shapeSelect.selected("none");
   shp = shapeSelect.value();
-
+  globalYoff = 0;
+  globalXoff = 0;
  }
 
 
@@ -362,19 +364,19 @@ function shapeSelectionEvent() {
 function keyPressed(){
    
     if(keyCode == UP_ARROW){
-        targetOffY-=offsetIncrement;
+        globalYoff-=offsetIncrement;
 
     }
     if(keyCode == DOWN_ARROW){
-        targetOffY+=offsetIncrement;
+        globalYoff+=offsetIncrement;
         
     }
     if(keyCode == LEFT_ARROW){
-        targetOffX-=offsetIncrement;
+        globalXoff-=offsetIncrement;
         
     }
     if(keyCode == RIGHT_ARROW){
-    targetOffX+=offsetIncrement;
+        globalXoff+=offsetIncrement;
         
     }
 
