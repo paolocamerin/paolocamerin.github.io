@@ -7,7 +7,7 @@ let n = 0;
 let iterations = 20;
 let offRotation = 0; 
 
-let rotSlider,radSlider,iteSlider,dimSlider,buttonNplus,buttonNminus;
+let rotSlider,radSlider,iteSlider,dimSlider,offXSlider,buttonNplus,buttonNminus;
 function preload(){
     img = loadImage(url)
 }
@@ -20,16 +20,17 @@ function setup(){
     dimSlider = createSlider(0,1000, 300, 1);
     radSlider = createSlider(-400,400, 200, 1);
     iteSlider = createSlider(1,40, 6, 1);
+    offXSlider = createSlider(-400,400,100,1);
     buttonNminus= createButton("N--");
     buttonNplus = createButton("N++");
     buttonNminus.mousePressed(function(){
         n--;
-        n = constrain(n, 0, 2);
+        n = constrain(n, 0, 3);
         d = 0; 
     });
     buttonNplus.mousePressed(function(){
         n++;
-        n = constrain(n, 0, 2);
+        n = constrain(n, 0, 3);
         d = 0; 
     });
 
@@ -55,6 +56,20 @@ switch (n){
     case 2:
         d = lerp(d, dTarget,0.2);
         r = lerp(r,rTarget,0.2);
+        translate(-(offsetX*iterations/2),0);
+        for(let i = 0; i < iterations; i++){
+            push();
+            translate(offsetX*i,0);
+            //rotate(map(i,0,iterations,0,TAU)+offRotation);
+            image(img,0,0,d,d);
+            pop();
+        }
+        
+    break;
+
+    case 3:
+        d = lerp(d, dTarget,0.2);
+        r = lerp(r,rTarget,0.2);
         for(let i = 0; i < iterations; i++){
             push();
             translate(r*cos(map(i, 0,iterations, 0, TAU)),r*sin(map(i, 0,iterations, 0, TAU)));
@@ -72,6 +87,7 @@ offRotation = rotSlider.value();
 dTarget = dimSlider.value();
 rTarget = radSlider.value();
 iterations = iteSlider.value();
+offsetX = offXSlider.value();
 
 fill(0);
 //text(round(frameRate()),-width/2+20,height/2-120);
