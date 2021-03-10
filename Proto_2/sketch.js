@@ -14,7 +14,7 @@ function preload(){
 
 
 function setup(){
-    createCanvas(windowWidth,windowHeight-30);
+    createCanvas(windowWidth,windowHeight-100);
     imageMode(CENTER);
     rotSlider = createSlider(-TAU,TAU, 0, 0.01);
     dimSlider = createSlider(0,1000, 300, 1);
