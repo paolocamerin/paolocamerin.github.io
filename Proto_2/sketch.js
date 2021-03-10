@@ -7,7 +7,7 @@ let n = 0;
 let iterations = 20;
 let offRotation = 0; 
 
-let rotSlider,radSlider,iteSlider,dimSlider;
+let rotSlider,radSlider,iteSlider,dimSlider,buttonNplus,buttonNminus;
 function preload(){
     img = loadImage(url)
 }
@@ -20,6 +20,19 @@ function setup(){
     dimSlider = createSlider(0,1000, 300, 1);
     radSlider = createSlider(-400,400, 200, 1);
     iteSlider = createSlider(1,40, 6, 1);
+    buttonNminus= createButton("N--");
+    buttonNplus = createButton("N++");
+    buttonNminus.mousePressed(function(){
+        n--;
+        n = constrain(n, 0, 2);
+        d = 0; 
+    });
+    buttonNplus.mousePressed(function(){
+        n++;
+        n = constrain(n, 0, 2);
+        d = 0; 
+    });
+
     
 }
 function draw(){
