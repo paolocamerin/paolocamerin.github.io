@@ -6,14 +6,21 @@ let rTarget = 300;
 let n = 0; 
 let iterations = 20;
 let offRotation = 0; 
+
+let rotSlider,radSlider,iteSlider,dimSlider;
 function preload(){
     img = loadImage(url)
 }
 
 
 function setup(){
-    createCanvas(windowWidth,windowHeight);
+    createCanvas(windowWidth,windowHeight-30);
     imageMode(CENTER);
+    rotSlider = createSlider(-TAU,TAU, 0, 0.01);
+    dimSlider = createSlider(0,1000, 300, 1);
+    radSlider = createSlider(-400,400, 200, 1);
+    iteSlider = createSlider(1,40, 6, 1);
+    
 }
 function draw(){
 background(245);
@@ -25,10 +32,11 @@ switch (n){
     break;
 
     case 1:
-        r = 0; 
+        r = lerp(r, rTarget,0.2);
         d = lerp(d, dTarget,0.2);
-        
+        rotate(offRotation);
         image(img,0,0,d,d);
+        r =0;
     break;
 
     case 2:
@@ -41,14 +49,20 @@ switch (n){
             image(img,0,0,d,d);
             pop();
         }
-        offRotation = map(mouseX,0,width,0,TAU);
-        rTarget = map(mouseY,0,height,-200,600);
+        
     break;
 
 
 }
+
+offRotation = rotSlider.value();
+dTarget = dimSlider.value();
+rTarget = radSlider.value();
+iterations = iteSlider.value();
+
 fill(0);
-text(round(frameRate()),-width/2+20,height/2-120);
+//text(round(frameRate()),-width/2+20,height/2-120);
+
 
 
 
@@ -62,11 +76,14 @@ function windowResized(){
 function keyPressed(){
     if(keyCode == UP_ARROW){
         n++;
+        n = constrain(n, 0, 2);
         d = 0; 
     }
     if(keyCode == DOWN_ARROW){
         n--;
+        n = constrain(n, 0, 2);
         d = 0; 
+
     }
     if(keyCode == LEFT_ARROW){
         iterations--;
