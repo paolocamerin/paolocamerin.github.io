@@ -8,7 +8,7 @@ function setup() {
  serial = new p5.SerialPort();
 
  serial.list();
- serial.open('/dev/tty.usbmodem14101');
+ serial.open('/dev/tty.usbmodem14201');
 
  serial.on('connected', serverConnected);
 
@@ -65,7 +65,7 @@ fill(21);
  text(buffer.length, 10, 60);
  buffer.push(latestData);
 
- if(buffer.length>30){
+ if(buffer.length>10){
      let a = 0; 
      for(let b of buffer){
         a+=int(b);
