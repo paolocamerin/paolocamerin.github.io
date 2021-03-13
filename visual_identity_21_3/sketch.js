@@ -32,7 +32,7 @@ function setup(){
 //createCanvas(windowWidth,windowHeight/2);
 createCanvas(windowWidth,480);
 textFont(f);
-rectMode(CENTER);
+//rectMode(CENTER);
 //imageMode(CENTER);
 noiseSizeSlider = createSlider(0, 200, 50, 1);
 noiseSizeSlider.position(width/10,height/10*8.5);
@@ -73,11 +73,14 @@ strokeCap(ROUND);
 function draw(){
    //clear();
    background(21,0,42)
+  // fill(21,0,42,10);
+   //noStroke();
+   //rect(0,0,width,height);
    mousePos = createVector(mouseX,mouseY);
    //noFill();
    //strokeWeight(5);
    //blendMode(MULTIPLY);
-   noStroke();
+   //noStroke();
    //stroke("#F82C82");
    //stroke(248,42,130,);
    fill(248,42,130);
