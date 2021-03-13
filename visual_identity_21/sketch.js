@@ -1,7 +1,7 @@
 
 let curves;
-let rad = 10;
-let spd = .06;
+let rad = 15;
+let spd = .03;
 let hu = 0;
 
 let f;
