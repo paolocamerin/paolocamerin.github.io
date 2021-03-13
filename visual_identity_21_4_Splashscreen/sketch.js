@@ -14,10 +14,11 @@ let word = "UID21";
 let mousePos;
 let resetting = false; 
 let showPoints = false;
-let hide = true; 
-let freeze = true;
+let hide = false; 
+let freeze = false;
 let saving = false;
-let timer = mode = 0;
+let timer = 0;
+let mode = 0; 
 let noiseRes = 150;
 let noiseSize = 40;
 let incr = 0.001;
@@ -87,6 +88,8 @@ print(curves);
 
 strokeJoin(ROUND);
 strokeCap(ROUND);
+
+
 }
 
 function draw(){
@@ -176,6 +179,12 @@ switch (mode){
          noiseSize = lerp(noiseSize,noiseSizeSlider.value(),0.1);
          noiseRes = lerp(noiseRes,noiseResSlider.value(),0.1);
          incr = lerp(incr,incrSlider.value(),0.1);
+         if(!hide){
+            showSliders();
+         }else{
+            hideSliders();
+         }
+        
          stroke(248,42,130,20);
          strokeWeight(10);
          noFill();
@@ -187,11 +196,11 @@ switch (mode){
       break;
       case 1:
          showPoints = true;
+         hideSliders();
          grab(true);
          if(!saving){
             image(brush, mouseX-brush.width/2,mouseY-brush.height/2);
          }
-         
          //noiseSize = lerp(noiseSize,noiseSizeSlider.value(),0.1);
          //noiseRes = lerp(noiseRes,noiseResSlider.value(),0.1);
          noiseSize = lerp(noiseSize,0.1,0.1);
@@ -199,6 +208,7 @@ switch (mode){
       break;
       case 2:
          showPoints = true;
+         hideSliders();
          grab(true);
          reset(0.03);
          if(!saving){
@@ -209,7 +219,9 @@ switch (mode){
       break;
 
       case 3:
+
          showPoints = false;
+         hideSliders();
          grab(false);
          reset(0.05);
         
@@ -219,6 +231,7 @@ switch (mode){
 
       case 4:
          showPoints = false;
+         hideSliders();
          reset(0.5);
          noiseSize = lerp(noiseSize,0.1,0.1);
          noiseRes = lerp(noiseRes,0.1,0.1);
@@ -243,30 +256,21 @@ textFont(fr);
 
 textSize(height/9);
 text("Shift Shapers", width/30*3,height/10*6);
-textSize(height/15);
-text("A Design Talk Show", width/30*3,height/10*7);
+textSize(height/25);
+text("A Design Talk Show", width/30*3,height/10*6.5);
 //image(socialImg,width/10,height/10*7,socialImg.width*0.3,socialImg.height*0.3);
 
 
 textSize(16);
 
 //text(round(frameRate()), 150,100);
-if(hide){
-   noiseResSlider.hide();
-   noiseSizeSlider.hide();
-   incrSlider.hide();
-   fill(245,100);
+if(saving || hide){
+   hideSliders();
    //text("Press 'H' to show menu",width/10,height/10*9);
    }else{
-      noiseResSlider.show();
-      noiseSizeSlider.show();
-      incrSlider.show();
-      
-      text("Press 'M' to switch between modes \nPress 'R' to reset \nPress 'H' to hide menu", width/10*5,height/10*8.5);
-     
-      text("Displacement",noiseSizeSlider.x,noiseSizeSlider.y+labelOffY);
-      text("Details",noiseResSlider.x,noiseResSlider.y+labelOffY);
-      text("Speed",incrSlider.x,incrSlider.y+labelOffY);  
+      text("Press 'M' to switch between modes \nPress 'R' to reset \nPress 'H' to hide menu \nPress 'F' to freeze and unfreeze \nPress 'S' to save the image", width/30*15,height/10*8);
+      textSize(36);
+      text("Mode: " + mode, width/30*20,height/10*9.5);
    }
 
 
@@ -289,19 +293,18 @@ if(d.mag()<diam/2){
    if(showPoints && !saving){
       point(p.x,p.y);
    }
-   
+   let scal = map(d.mag(),0,diam/2,1,0.1);
    if(mouseIsPressed){
-      let scal = map(d.mag(),0,diam/2,1,0.1);
+     
     p.x+=(mouseX-pmouseX)*scal;
     p.y+=(mouseY-pmouseY)*scal;
    }else if(!needToPress){
-      let scal = map(d.mag(),0,diam/2,1,0.1);
+      
       p.x+=(mouseX-pmouseX)*scal;
       p.y+=(mouseY-pmouseY)*scal;
 
    }
-//p.x = mousePos.x-(p.x-mousePos.x);
-//p.y = mousePos.y-(p.y-mousePos.y);
+
 }
 }
 }
@@ -320,18 +323,19 @@ function reset(rate){
 
 function keyPressed(){
    if(key == 'r' || key == 'R'){
-resetting=!resetting;
-print(resetting);
+      resetting=!resetting;
+      print(resetting);
    }
 
    if(key == 'f' || key == 'F'){
       freeze=!freeze;
-         }
+   }
 
    if(key == 'm' || key == 'M'){
       mode++;
-      if(mode>4)
-   mode = 0;       
+      if(mode>4){
+         mode = 0;  
+      } 
    }
 
    if(key == 'h' || key == 'H'){
@@ -356,5 +360,29 @@ print(resetting);
          showPoints = true;
       }
 
+}
+
+
+function hideSliders(){
+   
+      noiseResSlider.hide();
+      noiseSizeSlider.hide();
+      incrSlider.hide();
+   
+ 
+}
+
+function showSliders(){
+   if(!saving || !hide){
+      fill(245);
+      textSize(16);  
+      noiseResSlider.show();
+      noiseSizeSlider.show();
+      incrSlider.show();
+      text("Displacement",noiseSizeSlider.x,noiseSizeSlider.y+labelOffY);
+      text("Details",noiseResSlider.x,noiseResSlider.y+labelOffY);
+      text("Speed",incrSlider.x,incrSlider.y+labelOffY);  
+   }
+   
 }
 
