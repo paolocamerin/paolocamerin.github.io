@@ -13,6 +13,7 @@ let word = "UID21";
 let mousePos;
 let resetting = false; 
 let showPoints = false;
+let hide = false; 
 let timer = mode = 0;
 let noiseRes = 150;
 let noiseSize = 40;
@@ -184,24 +185,42 @@ if(resetting){
       resetting = false;
    }
 }
+
+
+
 fill(245);
 noStroke();
 textFont(fr);
 
 
-textSize(15);
-text(round(frameRate()), 150,100);
+
 
 textSize(64);
 text("A Design Talk Show", width/10,height/10*6);
 image(socialImg,width/10,height/10*7,socialImg.width*0.3,socialImg.height*0.3);
 
-textSize(20);
-text("Press 'M' to switch between modes \nPress 'R' to reset", width/10*5,height/10*8.5);
+
 textSize(16);
-text("Displacement",noiseSizeSlider.x,noiseSizeSlider.y+labelOffY);
-text("Details",noiseResSlider.x,noiseResSlider.y+labelOffY);
-text("Speed",incrSlider.x,incrSlider.y+labelOffY);
+
+//text(round(frameRate()), 150,100);
+if(hide){
+   noiseResSlider.hide();
+   noiseSizeSlider.hide();
+   incrSlider.hide();
+   fill(245,100);
+   text("Press 'H' to show menu",width/10,height/10*9);
+   }else{
+      noiseResSlider.show();
+      noiseSizeSlider.show();
+      incrSlider.show();
+      
+      text("Press 'M' to switch between modes \nPress 'R' to reset \nPress 'H' to hide menu", width/10*5,height/10*8.5);
+     
+      text("Displacement",noiseSizeSlider.x,noiseSizeSlider.y+labelOffY);
+      text("Details",noiseResSlider.x,noiseResSlider.y+labelOffY);
+      text("Speed",incrSlider.x,incrSlider.y+labelOffY);  
+   }
+
 
 
 }
@@ -260,6 +279,10 @@ print(resetting);
       mode++;
       if(mode>4)
    mode = 0;       
+   }
+
+   if(key == 'h' || key == 'H'){
+   hide=!hide;     
    }
 
 }
