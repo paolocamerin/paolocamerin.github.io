@@ -2,18 +2,21 @@
 
 let curves = [];
 let checkPoint = [];
-
+let brush; 
 let d = 20;
 let diam = 300;
 let f,fr,socialImg;
 let points = [];
+let circles =[];
 let temp;
 let ang = 0; 
 let word = "UID21";
 let mousePos;
 let resetting = false; 
 let showPoints = false;
-let hide = false; 
+let hide = true; 
+let freeze = true;
+let saving = false;
 let timer = mode = 0;
 let noiseRes = 150;
 let noiseSize = 40;
@@ -21,6 +24,8 @@ let incr = 0.001;
 let zRadius = 100;
 let labelOffY = 40;
 let noiseSizeSlider, noiseResSlider,incrSlider;
+let can;
+let gDim = 1000;
 
 function preload(){
    f = loadFont("/visual_identity_21_3/Assets/Proxima Nova Extrabold.otf");
@@ -30,17 +35,25 @@ function preload(){
 
 function setup(){
 //createCanvas(windowWidth,windowHeight/2);
-createCanvas(windowWidth,windowHeight/2);
+can = createCanvas(windowWidth,windowHeight);
 textFont(f);
+ang = random(100); 
+diam = width/3;
+brush = createGraphics(diam*2,diam*2);
+
+for(let i = 0; i < 3; i++){
+circles.push(createVector(random(width),random(height)));
+}
+
 //rectMode(CENTER);
 //imageMode(CENTER);
-noiseSizeSlider = createSlider(0, 200, 50, 1);
+noiseSizeSlider = createSlider(1, 400, 200, 1);
 noiseSizeSlider.position(width/10,height/10*8.5);
-noiseResSlider = createSlider(0, 400, 200, 1);
+noiseResSlider = createSlider(1, 600, 400, 1);
 noiseResSlider.position(width/10*2,height/10*8.5);
 incrSlider = createSlider(0, 0.001, 0.00005, 0.00001);
 incrSlider.position(width/10*3,height/10*8.5);
-temp = f.textToPoints('UID21', width/10, height/2, height/2, { 
+temp = f.textToPoints('UID21', width/10, height/2, height/2.5, { 
    
    sampleFactor: 0.3, 
 
@@ -64,6 +77,12 @@ for(let n of temp){
    checkPoint[checkPoint.length-1].push(v1);
 
 }
+brush.clear();
+brush.translate(brush.width/2,brush.height/2);
+brush.noFill();
+brush.stroke(248,42,130,60);
+brush.strokeWeight(10);
+brush.ellipse(0,0,diam,diam);
 print(curves);
 
 strokeJoin(ROUND);
@@ -129,8 +148,11 @@ function draw(){
          
       }
  
-   
-ang+=incr;
+
+if(!freeze){
+   ang+=incr;
+}
+
 
 switch (mode){
       case 0:
@@ -139,14 +161,22 @@ switch (mode){
          noiseSize = lerp(noiseSize,noiseSizeSlider.value(),0.1);
          noiseRes = lerp(noiseRes,noiseResSlider.value(),0.1);
          incr = lerp(incr,incrSlider.value(),0.1);
+         stroke(248,42,130,60);
+         strokeWeight(10);
+         noFill();
+         for(let p of circles){
+            ellipse(p.x,p.y,gDim,gDim);
+         }
+        
+         //ellipse(width,height,gDim,gDim);
       break;
       case 1:
          showPoints = true;
          grab(true);
-         strokeWeight(10);
-         noFill();
-         stroke(248,42,130,60);  
-         ellipse(mousePos.x,mousePos.y,diam,diam);
+         if(!saving){
+            image(brush, mouseX-brush.width/2,mouseY-brush.height/2);
+         }
+         
          //noiseSize = lerp(noiseSize,noiseSizeSlider.value(),0.1);
          //noiseRes = lerp(noiseRes,noiseResSlider.value(),0.1);
          noiseSize = lerp(noiseSize,0,0.1);
@@ -156,10 +186,9 @@ switch (mode){
          showPoints = true;
          grab(true);
          reset(0.01);
-         strokeWeight(10);
-         noFill();
-         stroke(248,42,130,60);  
-         ellipse(mousePos.x,mousePos.y,diam,diam);
+         if(!saving){
+            image(brush, mouseX-brush.width/2,mouseY-brush.height/2);
+         }
          noiseSize = lerp(noiseSize,0,0.1);
          noiseRes = lerp(noiseRes,0,0.1);
       break;
@@ -175,6 +204,7 @@ switch (mode){
 
       case 4:
          showPoints = false;
+         reset(0.5);
          noiseSize = lerp(noiseSize,0,0.1);
          noiseRes = lerp(noiseRes,0,0.1);
       break;
@@ -196,11 +226,11 @@ noStroke();
 textFont(fr);
 
 
-
-
-textSize(64);
-text("A Design Talk Show", width/10,height/10*6);
-image(socialImg,width/10,height/10*7,socialImg.width*0.3,socialImg.height*0.3);
+textSize(144);
+text("Shift Shapers", width/10,height/10*6);
+textSize(48);
+text("A Design Talk Show", width/10,height/10*7);
+//image(socialImg,width/10,height/10*7,socialImg.width*0.3,socialImg.height*0.3);
 
 
 textSize(16);
@@ -211,7 +241,7 @@ if(hide){
    noiseSizeSlider.hide();
    incrSlider.hide();
    fill(245,100);
-   text("Press 'H' to show menu",width/10,height/10*9);
+   //text("Press 'H' to show menu",width/10,height/10*9);
    }else{
       noiseResSlider.show();
       noiseSizeSlider.show();
@@ -223,6 +253,7 @@ if(hide){
       text("Details",noiseResSlider.x,noiseResSlider.y+labelOffY);
       text("Speed",incrSlider.x,incrSlider.y+labelOffY);  
    }
+
 
 
 
@@ -240,7 +271,7 @@ for(let p of c){
    stroke(248,42,130,40); 
 if(d.mag()<diam/2){
    //print(d);
-   if(showPoints){
+   if(showPoints && !saving){
       point(p.x,p.y);
    }
    
@@ -287,6 +318,24 @@ print(resetting);
    if(key == 'h' || key == 'H'){
    hide=!hide;     
    }
+
+   if(key == ' ' ){
+      ang = random(1000);
+      gDim = random(1000,width);
+      circles = [];
+      for(let i = 0; i < 3; i++){
+         circles.push(createVector(random(width),random(height)));
+         }
+      }
+
+      if(key == 's'){
+         saving = true;
+         showPoints = false;
+         redraw();
+         save(can,'splashScreen'+hour()+minute()+second()+'png');
+         saving = false;
+         showPoints = true;
+      }
 
 }
 
