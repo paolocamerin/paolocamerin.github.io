@@ -30,9 +30,9 @@ function setup(){
 createCanvas(windowWidth,windowHeight);
 textFont(f);
 rectMode(CENTER)
-noiseSizeSlider = createSlider(0, 100, 20, 1);
+noiseSizeSlider = createSlider(0, 200, 50, 1);
 noiseSizeSlider.position(100,height-100);
-noiseResSlider = createSlider(20, 200, 50, 1);
+noiseResSlider = createSlider(0, 400, 50, 1);
 noiseResSlider.position(100,height-140);
 incrSlider = createSlider(0, 0.001, 0.0001, 0.00001);
 incrSlider.position(100,height-180);
@@ -69,12 +69,12 @@ strokeCap(ROUND);
 function draw(){
    clear();
    mousePos = createVector(mouseX,mouseY);
-  noFill();
-   strokeWeight(5);
+   //noFill();
+   //strokeWeight(5);
    //blendMode(MULTIPLY);
-   //noStroke();
+   noStroke();
    //stroke("#F82C82");
-   stroke(248,42,130,);
+   //stroke(248,42,130,);
    fill(248,42,130);
    
    for(let i = 0; i < curves.length; i++){
@@ -83,8 +83,8 @@ function draw(){
             let n = 0;
             for(let j = curves[i].length-1; j > 0; j--){
                let p = curves[i][j];
-               vertex(p.x+noiseSize*map(noise(p.x/noiseRes,p.y/noiseRes,zRadius*cos(ang)),0,1,-1,1),
-               p.y+noiseSize*map(noise(p.x/noiseRes,p.y/noiseRes,zRadius*sin(ang)),0,1,-1,1));
+               vertex(p.x+noiseSize*map(noise(p.x/noiseRes+zRadius*cos(ang),p.y/noiseRes+zRadius*sin(ang),zRadius*cos(ang)),0,1,-1,1),
+               p.y+noiseSize*map(noise(p.x/noiseRes+zRadius*cos(ang),p.y/noiseRes+zRadius*sin(ang),zRadius*sin(ang)),0,1,-1,1));
                //text(n+=1,p.x,p.y);
               
                //push();
@@ -101,8 +101,12 @@ function draw(){
                for(let k = curves[i+1].length-1; k > 0; k--){
                   let p = curves[i+1][k];
                   //text(n1+=1,p.x,p.y);
-                  vertex(p.x+noiseSize*map(noise(p.x/noiseRes,p.y/noiseRes,zRadius*cos(ang)),0,1,-1,1),
-                  p.y+noiseSize*map(noise(p.x/noiseRes,p.y/noiseRes,zRadius*sin(ang)),0,1,-1,1));
+                  
+                  vertex(p.x+noiseSize*map(noise(p.x/noiseRes+zRadius*cos(ang),p.y/noiseRes+zRadius*sin(ang),zRadius*cos(ang)),0,1,-1,1),
+                  p.y+noiseSize*map(noise(p.x/noiseRes+zRadius*cos(ang),p.y/noiseRes+zRadius*sin(ang),zRadius*sin(ang)),0,1,-1,1));
+               
+                  //vertex(p.x+noiseSize*map(noise(p.x/noiseRes,p.y/noiseRes,zRadius*cos(ang)),0,1,-1,1),
+                  //p.y+noiseSize*map(noise(p.x/noiseRes,p.y/noiseRes,zRadius*sin(ang)),0,1,-1,1));
                   //push();
                   //translate(p.x,p.y);
                   //rotate(radians(p.alpha));
@@ -131,6 +135,7 @@ switch (mode){
       case 1:
          showPoints = true;
          grab();
+         strokeWeight(10);
          noFill();
          stroke(248,42,130,60);  
          ellipse(mousePos.x,mousePos.y,diam,diam);
@@ -140,6 +145,17 @@ switch (mode){
          noiseRes = lerp(noiseRes,0,0.1);
       break;
       case 2:
+         showPoints = true;
+         grab();
+         reset();
+         strokeWeight(10);
+         noFill();
+         stroke(248,42,130,60);  
+         ellipse(mousePos.x,mousePos.y,diam,diam);
+         noiseSize = lerp(noiseSize,0,0.1);
+         noiseRes = lerp(noiseRes,0,0.1);
+      break;
+      case 3:
          showPoints = false;
          noiseSize = lerp(noiseSize,0,0.1);
          noiseRes = lerp(noiseRes,0,0.1);
