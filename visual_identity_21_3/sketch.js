@@ -5,7 +5,7 @@ let checkPoint = [];
 
 let d = 20;
 let diam = 300;
-let f,fr;
+let f,fr,socialImg;
 let points = [];
 let temp;
 let ang = 0; 
@@ -18,25 +18,28 @@ let noiseRes = 150;
 let noiseSize = 40;
 let incr = 0.001;
 let zRadius = 100;
-
+let labelOffY = 40;
 let noiseSizeSlider, noiseResSlider,incrSlider;
 
 function preload(){
-   f = loadFont("/visual_identity_21_3/Assets/Proxima Nova Extrabold.otf")
-   fr = loadFont("/visual_identity_21_3/Assets/ProximaNova Regular.otf")
+   f = loadFont("/visual_identity_21_3/Assets/Proxima Nova Extrabold.otf");
+   fr = loadFont("/visual_identity_21_3/Assets/ProximaNova Regular.otf");
+   socialImg = loadImage("/visual_identity_21_3/Assets/social_w.png");
 }
 
 function setup(){
-createCanvas(windowWidth,windowHeight);
+//createCanvas(windowWidth,windowHeight/2);
+createCanvas(windowWidth,480);
 textFont(f);
-rectMode(CENTER)
+rectMode(CENTER);
+//imageMode(CENTER);
 noiseSizeSlider = createSlider(0, 200, 50, 1);
-noiseSizeSlider.position(100,height-100);
-noiseResSlider = createSlider(0, 400, 50, 1);
-noiseResSlider.position(100,height-140);
-incrSlider = createSlider(0, 0.001, 0.0001, 0.00001);
-incrSlider.position(100,height-180);
-temp = f.textToPoints('UID21', 100, height/2, 400, { 
+noiseSizeSlider.position(width/10,height/10*8.5);
+noiseResSlider = createSlider(0, 400, 200, 1);
+noiseResSlider.position(width/10*2,height/10*8.5);
+incrSlider = createSlider(0, 0.001, 0.00005, 0.00001);
+incrSlider.position(width/10*3,height/10*8.5);
+temp = f.textToPoints('UID21', width/10, height/2, height/2, { 
    
    sampleFactor: 0.3, 
 
@@ -67,7 +70,8 @@ strokeCap(ROUND);
 }
 
 function draw(){
-   clear();
+   //clear();
+   background(21,0,42)
    mousePos = createVector(mouseX,mouseY);
    //noFill();
    //strokeWeight(5);
@@ -134,7 +138,7 @@ switch (mode){
       break;
       case 1:
          showPoints = true;
-         grab();
+         grab(true);
          strokeWeight(10);
          noFill();
          stroke(248,42,130,60);  
@@ -146,8 +150,8 @@ switch (mode){
       break;
       case 2:
          showPoints = true;
-         grab();
-         reset();
+         grab(true);
+         reset(0.01);
          strokeWeight(10);
          noFill();
          stroke(248,42,130,60);  
@@ -155,7 +159,17 @@ switch (mode){
          noiseSize = lerp(noiseSize,0,0.1);
          noiseRes = lerp(noiseRes,0,0.1);
       break;
+
       case 3:
+         showPoints = false;
+         grab(false);
+         reset(0.05);
+        
+         noiseSize = lerp(noiseSize,0,0.1);
+         noiseRes = lerp(noiseRes,0,0.1);
+      break;
+
+      case 4:
          showPoints = false;
          noiseSize = lerp(noiseSize,0,0.1);
          noiseRes = lerp(noiseRes,0,0.1);
@@ -163,14 +177,14 @@ switch (mode){
 }
 
 if(resetting){
-   reset();
+   reset(0.3);
       timer++;
    if(timer>100){
       timer =0;
       resetting = false;
    }
 }
-fill(42);
+fill(245);
 noStroke();
 textFont(fr);
 
@@ -178,12 +192,16 @@ textFont(fr);
 textSize(15);
 text(round(frameRate()), 150,100);
 
-textSize(72);
-text("A Design Talk Show", 150,height/2+100);
+textSize(64);
+text("A Design Talk Show", width/10,height/10*6);
+image(socialImg,width/10,height/10*7,socialImg.width*0.3,socialImg.height*0.3);
 
 textSize(20);
-text("Press 'M' to switch between modes \nPress 'R' to reset", 100,height-40);
-
+text("Press 'M' to switch between modes \nPress 'R' to reset", width/10*5,height/10*8.5);
+textSize(16);
+text("Displacement",noiseSizeSlider.x,noiseSizeSlider.y+labelOffY);
+text("Details",noiseResSlider.x,noiseResSlider.y+labelOffY);
+text("Speed",incrSlider.x,incrSlider.y+labelOffY);
 
 
 }
@@ -192,7 +210,7 @@ function windowResized(){
 resizeCanvas(windowWidth,windowHeight);
 }
 
-function grab(){
+function grab(needToPress){
 for(let c of curves){
 for(let p of c){
    let d = p5.Vector.sub(mousePos,createVector(p.x,p.y));
@@ -200,11 +218,19 @@ for(let p of c){
    stroke(248,42,130,40); 
 if(d.mag()<diam/2){
    //print(d);
-   point(p.x,p.y);
+   if(showPoints){
+      point(p.x,p.y);
+   }
+   
    if(mouseIsPressed){
       let scal = map(d.mag(),0,diam/2,1,0.1);
     p.x+=(mouseX-pmouseX)*scal;
     p.y+=(mouseY-pmouseY)*scal;
+   }else if(!needToPress){
+      let scal = map(d.mag(),0,diam/2,1,0.1);
+      p.x+=(mouseX-pmouseX)*scal;
+      p.y+=(mouseY-pmouseY)*scal;
+
    }
 //p.x = mousePos.x-(p.x-mousePos.x);
 //p.y = mousePos.y-(p.y-mousePos.y);
@@ -215,11 +241,11 @@ if(d.mag()<diam/2){
 
 
 
-function reset(){
+function reset(rate){
    for(let c of curves){
       for(let p of c){
-         p.x = lerp(p.x,checkPoint[curves.indexOf(c)][c.indexOf(p)].x,0.1);
-         p.y = lerp(p.y,checkPoint[curves.indexOf(c)][c.indexOf(p)].y,0.1);
+         p.x = lerp(p.x,checkPoint[curves.indexOf(c)][c.indexOf(p)].x,rate);
+         p.y = lerp(p.y,checkPoint[curves.indexOf(c)][c.indexOf(p)].y,rate);
       }
    }
 }
@@ -232,7 +258,7 @@ print(resetting);
 
    if(key == 'm' || key == 'M'){
       mode++;
-      if(mode>3)
+      if(mode>4)
    mode = 0;       
    }
 
