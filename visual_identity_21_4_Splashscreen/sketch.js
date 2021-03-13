@@ -52,32 +52,12 @@ noiseSizeSlider = createSlider(1, 400, 200, 1);
 noiseSizeSlider.position(width/10,height/10*8.5);
 noiseResSlider = createSlider(1, 600, 400, 1);
 noiseResSlider.position(width/10*2,height/10*8.5);
-incrSlider = createSlider(0, 0.001, 0.00005, 0.00001);
+incrSlider = createSlider(0.000005, 0.0001, 0.00005, 0.00001);
 incrSlider.position(width/10*3,height/10*8.5);
-temp = f.textToPoints('UID21', width/30*2, height/2, height/2.5, { 
-   
-   sampleFactor: 0.3, 
 
-   simplifyThreshold: 0
 
-});
+createTextPoints();
 
-let lastDist = createVector(0,0);
-
-for(let n of temp){
-
-   if(p5.Vector.dist(createVector(n.x,n.y),lastDist)>20 ){
-      curves.push([]);
-      checkPoint.push([]);
-      print(curves);
-   }
-   lastDist = createVector(n.x,n.y);
-   let v = new p5.Vector(n.x,n.y);
-   let v1 = new p5.Vector(n.x,n.y);
-   curves[curves.length-1].push(v);
-   checkPoint[checkPoint.length-1].push(v1);
-
-}
 brush.clear();
 brush.translate(brush.width/2,brush.height/2);
 brush.noFill();
@@ -174,16 +154,29 @@ if(!freeze){
 
 switch (mode){
       case 0:
-         //warp();
+       if(saving){
+print("Saving!!!!  Mode = " + mode);
+       }
+         if(hide){
+            if(saving){
+               print("Saving!!!! hiding");
+                      }
+            hideSliders();
+            
+         }else{
+            if(saving){
+               print("Saving!!!! Showing");
+                      }
+            showSliders();
+          
+
+         }
+
          showPoints = false;
          noiseSize = lerp(noiseSize,noiseSizeSlider.value(),0.1);
          noiseRes = lerp(noiseRes,noiseResSlider.value(),0.1);
          incr = lerp(incr,incrSlider.value(),0.1);
-         if(!hide){
-            showSliders();
-         }else{
-            hideSliders();
-         }
+         
         
          stroke(248,42,130,20);
          strokeWeight(10);
@@ -258,16 +251,22 @@ textSize(height/9);
 text("Shift Shapers", width/30*3,height/10*6);
 textSize(height/25);
 text("A Design Talk Show", width/30*3,height/10*6.5);
-//image(socialImg,width/10,height/10*7,socialImg.width*0.3,socialImg.height*0.3);
+if(height>displayHeight/2){
+   let imgH = height/10*0.6;
+   imgH = constrain(imgH, 16,36);
+   let imgW = imgH*socialImg.width/socialImg.height;
+   image(socialImg,width/30*3,height/10*7.5,imgW,imgH);
+
+}
 
 
-textSize(16);
 
 //text(round(frameRate()), 150,100);
 if(saving || hide){
    hideSliders();
    //text("Press 'H' to show menu",width/10,height/10*9);
    }else{
+      textSize(16);
       text("Press 'M' to switch between modes \nPress 'R' to reset \nPress 'H' to hide menu \nPress 'F' to freeze and unfreeze \nPress 'S' to save the image", width/30*15,height/10*8);
       textSize(36);
       text("Mode: " + mode, width/30*20,height/10*9.5);
@@ -278,9 +277,13 @@ if(saving || hide){
 
 }
 
-//function windowResized(){
-//resizeCanvas(windowWidth,windowHeight);
-//}
+function windowResized(){
+resizeCanvas(windowWidth,windowHeight);
+noiseSizeSlider.position(width/10,height/10*8.5);
+noiseResSlider.position(width/10*2,height/10*8.5);
+incrSlider.position(width/10*3,height/10*8.5);
+createTextPoints();
+}
 
 function grab(needToPress){
 for(let c of curves){
@@ -354,10 +357,13 @@ function keyPressed(){
       if(key == 's'){
          saving = true;
          showPoints = false;
+         console.log("saving triggered");
+         console.log("saving = " + saving);
          redraw();
          save(can,'splashScreen'+hour()+minute()+second()+'png');
          saving = false;
          showPoints = true;
+         
       }
 
 }
@@ -373,16 +379,52 @@ function hideSliders(){
 }
 
 function showSliders(){
-   if(!saving || !hide){
+   if(saving){
+      print("Saving!!!! Showing inside");
+   }else if(!hide){
       fill(245);
       textSize(16);  
-      noiseResSlider.show();
-      noiseSizeSlider.show();
-      incrSlider.show();
       text("Displacement",noiseSizeSlider.x,noiseSizeSlider.y+labelOffY);
       text("Details",noiseResSlider.x,noiseResSlider.y+labelOffY);
       text("Speed",incrSlider.x,incrSlider.y+labelOffY);  
+      noiseResSlider.show();
+      noiseSizeSlider.show();
+      incrSlider.show();
+    
+     
    }
    
 }
 
+
+function createTextPoints(){
+   curves = [];
+   checkPoint = [];
+   points = [];
+
+   temp = f.textToPoints('UID21', width/30*2, height/2, height/2.5, { 
+   
+      sampleFactor: 0.3, 
+   
+      simplifyThreshold: 0
+   
+   });
+   
+   let lastDist = createVector(0,0);
+   
+   for(let n of temp){
+   
+      if(p5.Vector.dist(createVector(n.x,n.y),lastDist)>20 ){
+         curves.push([]);
+         checkPoint.push([]);
+         print(curves);
+      }
+      lastDist = createVector(n.x,n.y);
+      let v = new p5.Vector(n.x,n.y);
+      let v1 = new p5.Vector(n.x,n.y);
+      curves[curves.length-1].push(v);
+      checkPoint[checkPoint.length-1].push(v1);
+   
+   }
+
+}
