@@ -38,7 +38,7 @@ function setup(){
 can = createCanvas(windowWidth,windowHeight);
 textFont(f);
 ang = random(100); 
-diam = width/3;
+diam = height/2;
 brush = createGraphics(diam*2,diam*2);
 
 for(let i = 0; i < 3; i++){
@@ -53,7 +53,7 @@ noiseResSlider = createSlider(1, 600, 400, 1);
 noiseResSlider.position(width/10*2,height/10*8.5);
 incrSlider = createSlider(0, 0.001, 0.00005, 0.00001);
 incrSlider.position(width/10*3,height/10*8.5);
-temp = f.textToPoints('UID21', width/10, height/2, height/2.5, { 
+temp = f.textToPoints('UID21', width/30*2, height/2, height/2.5, { 
    
    sampleFactor: 0.3, 
 
@@ -103,7 +103,7 @@ function draw(){
    //stroke("#F82C82");
    //stroke(248,42,130,);
    fill(248,42,130);
-   
+  
    for(let i = 0; i < curves.length; i++){
       
          beginShape();
@@ -140,10 +140,25 @@ function draw(){
                   //rect(0,0,d,d+10*sin(ang*(cos(x/10))),map(dist(x,y,mouseX,mouseY),0,1000,0,d));
                   //pop();
                }
+               /*let l = curves[i+1][curves[i+1].length-1];
+               curveVertex(l.x+noiseSize*map(noise(l.x/noiseRes+zRadius*cos(ang),l.y/noiseRes+zRadius*sin(ang),zRadius*cos(ang)),0,1,-1,1),
+               l.y+noiseSize*map(noise(l.x/noiseRes+zRadius*cos(ang),l.y/noiseRes+zRadius*sin(ang),zRadius*sin(ang)),0,1,-1,1));
+                 */ 
+               //curveVertex(curves[i+1][1].x,curves[i+1][1].y);
                endContour(CLOSE);
                i++;
             }
-         
+            /*else{
+               let l = curves[i][curves[i].length-1];
+               let l2 = curves[i][curves[i].length-10];
+               curveVertex(l.x+noiseSize*map(noise(l.x/noiseRes+zRadius*cos(ang),l.y/noiseRes+zRadius*sin(ang),zRadius*cos(ang)),0,1,-1,1),
+                  l.y+noiseSize*map(noise(l.x/noiseRes+zRadius*cos(ang),l.y/noiseRes+zRadius*sin(ang),zRadius*sin(ang)),0,1,-1,1));
+               
+                  curveVertex(l2.x+noiseSize*map(noise(l2.x/noiseRes+zRadius*cos(ang),l2.y/noiseRes+zRadius*sin(ang),zRadius*cos(ang)),0,1,-1,1),
+                  l2.y+noiseSize*map(noise(l2.x/noiseRes+zRadius*cos(ang),l2.y/noiseRes+zRadius*sin(ang),zRadius*sin(ang)),0,1,-1,1));
+               
+            }*/
+                
          endShape(CLOSE);
          
       }
@@ -161,7 +176,7 @@ switch (mode){
          noiseSize = lerp(noiseSize,noiseSizeSlider.value(),0.1);
          noiseRes = lerp(noiseRes,noiseResSlider.value(),0.1);
          incr = lerp(incr,incrSlider.value(),0.1);
-         stroke(248,42,130,60);
+         stroke(248,42,130,20);
          strokeWeight(10);
          noFill();
          for(let p of circles){
@@ -179,18 +194,18 @@ switch (mode){
          
          //noiseSize = lerp(noiseSize,noiseSizeSlider.value(),0.1);
          //noiseRes = lerp(noiseRes,noiseResSlider.value(),0.1);
-         noiseSize = lerp(noiseSize,0,0.1);
-         noiseRes = lerp(noiseRes,0,0.1);
+         noiseSize = lerp(noiseSize,0.1,0.1);
+         noiseRes = lerp(noiseRes,0.1,0.1);
       break;
       case 2:
          showPoints = true;
          grab(true);
-         reset(0.01);
+         reset(0.03);
          if(!saving){
             image(brush, mouseX-brush.width/2,mouseY-brush.height/2);
          }
-         noiseSize = lerp(noiseSize,0,0.1);
-         noiseRes = lerp(noiseRes,0,0.1);
+         noiseSize = lerp(noiseSize,0.1,0.1);
+         noiseRes = lerp(noiseRes,0.1,0.1);
       break;
 
       case 3:
@@ -198,15 +213,15 @@ switch (mode){
          grab(false);
          reset(0.05);
         
-         noiseSize = lerp(noiseSize,0,0.1);
-         noiseRes = lerp(noiseRes,0,0.1);
+         noiseSize = lerp(noiseSize,0.1,0.1);
+         noiseRes = lerp(noiseRes,0.1,0.1);
       break;
 
       case 4:
          showPoints = false;
          reset(0.5);
-         noiseSize = lerp(noiseSize,0,0.1);
-         noiseRes = lerp(noiseRes,0,0.1);
+         noiseSize = lerp(noiseSize,0.1,0.1);
+         noiseRes = lerp(noiseRes,0.1,0.1);
       break;
 }
 
@@ -226,10 +241,10 @@ noStroke();
 textFont(fr);
 
 
-textSize(144);
-text("Shift Shapers", width/10,height/10*6);
-textSize(48);
-text("A Design Talk Show", width/10,height/10*7);
+textSize(height/9);
+text("Shift Shapers", width/30*3,height/10*6);
+textSize(height/15);
+text("A Design Talk Show", width/30*3,height/10*7);
 //image(socialImg,width/10,height/10*7,socialImg.width*0.3,socialImg.height*0.3);
 
 
@@ -308,6 +323,10 @@ function keyPressed(){
 resetting=!resetting;
 print(resetting);
    }
+
+   if(key == 'f' || key == 'F'){
+      freeze=!freeze;
+         }
 
    if(key == 'm' || key == 'M'){
       mode++;
