@@ -244,11 +244,11 @@ text("Shift Shapers", width/30*3,height/10*6);
 textSize(height/25);
 text("A Design Talk Show", width/30*3,height/10*6.7);
 text("Tuesday June 1st @ 15.00 CET", width/30*3,height/10*7.5);
-if(height>displayHeight/2){
+if(height>displayHeight/2 && !saving){
    let imgH = height/10*0.6;
    imgH = constrain(imgH, 16,36);
    let imgW = imgH*socialImg.width/socialImg.height;
-   //image(socialImg,width/30*3,height/10*7.5,imgW,imgH);
+   image(socialImg,width/30*3,height/10*9,imgW,imgH);
 
 }
 
@@ -350,7 +350,7 @@ function keyPressed(){
          console.log("saving triggered");
          console.log("saving = " + saving);
          redraw();
-         save(can,'splashScreen'+hour()+minute()+second()+'png');
+         save(can,'splashScreen'+hour()+minute()+second()+month()+day()+year());
          saving = false;
          showPoints = true;
          
