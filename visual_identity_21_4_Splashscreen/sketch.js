@@ -37,15 +37,10 @@ function preload(){
 function setup(){
 //createCanvas(windowWidth,windowHeight/2);
 can = createCanvas(windowWidth,windowHeight);
-textFont(f);
+
+
+
 ang = random(100); 
-diam = height/2;
-brush = createGraphics(diam*2,diam*2);
-
-for(let i = 0; i < 3; i++){
-circles.push(createVector(random(width),random(height)));
-}
-
 //rectMode(CENTER);
 //imageMode(CENTER);
 noiseSizeSlider = createSlider(1, 400, 200, 1);
@@ -55,15 +50,12 @@ noiseResSlider.position(width/10*2,height/10*8.5);
 incrSlider = createSlider(0.000005, 0.0001, 0.00005, 0.00001);
 incrSlider.position(width/10*3,height/10*8.5);
 
-
+textFont(f);
+createBrush();
+generateCircles();
 createTextPoints();
 
-brush.clear();
-brush.translate(brush.width/2,brush.height/2);
-brush.noFill();
-brush.stroke(248,42,130,60);
-brush.strokeWeight(10);
-brush.ellipse(0,0,diam,diam);
+
 print(curves);
 
 strokeJoin(ROUND);
@@ -85,6 +77,8 @@ function draw(){
    //noStroke();
    //stroke("#F82C82");
    //stroke(248,42,130,);
+   drawCircles();
+
    fill(248,42,130);
   
    for(let i = 0; i < curves.length; i++){
@@ -151,6 +145,7 @@ if(!freeze){
    ang+=incr;
 }
 
+  
 
 switch (mode){
       case 0:
@@ -178,22 +173,19 @@ print("Saving!!!!  Mode = " + mode);
          incr = lerp(incr,incrSlider.value(),0.1);
          
         
-         stroke(248,42,130,20);
-         strokeWeight(10);
-         noFill();
-         for(let p of circles){
-            ellipse(p.x,p.y,gDim,gDim);
-         }
+     
         
          //ellipse(width,height,gDim,gDim);
       break;
       case 1:
          showPoints = true;
+         
          hideSliders();
          grab(true);
          if(!saving){
             image(brush, mouseX-brush.width/2,mouseY-brush.height/2);
          }
+         
          //noiseSize = lerp(noiseSize,noiseSizeSlider.value(),0.1);
          //noiseRes = lerp(noiseRes,noiseResSlider.value(),0.1);
          noiseSize = lerp(noiseSize,0.1,0.1);
@@ -234,7 +226,7 @@ print("Saving!!!!  Mode = " + mode);
 if(resetting){
    reset(0.3);
       timer++;
-   if(timer>100){
+   if(timer>60){
       timer =0;
       resetting = false;
    }
@@ -250,12 +242,13 @@ textFont(fr);
 textSize(height/9);
 text("Shift Shapers", width/30*3,height/10*6);
 textSize(height/25);
-text("A Design Talk Show", width/30*3,height/10*6.5);
+text("A Design Talk Show", width/30*3,height/10*6.7);
+text("Tuesday June 1st @ 15.00 CET", width/30*3,height/10*7.5);
 if(height>displayHeight/2){
    let imgH = height/10*0.6;
    imgH = constrain(imgH, 16,36);
    let imgW = imgH*socialImg.width/socialImg.height;
-   image(socialImg,width/30*3,height/10*7.5,imgW,imgH);
+   //image(socialImg,width/30*3,height/10*7.5,imgW,imgH);
 
 }
 
@@ -283,6 +276,7 @@ noiseSizeSlider.position(width/10,height/10*8.5);
 noiseResSlider.position(width/10*2,height/10*8.5);
 incrSlider.position(width/10*3,height/10*8.5);
 createTextPoints();
+createBrush();
 }
 
 function grab(needToPress){
@@ -347,11 +341,7 @@ function keyPressed(){
 
    if(key == ' ' ){
       ang = random(1000);
-      gDim = random(1000,width);
-      circles = [];
-      for(let i = 0; i < 3; i++){
-         circles.push(createVector(random(width),random(height)));
-         }
+      generateCircles();
       }
 
       if(key == 's'){
@@ -427,4 +417,40 @@ function createTextPoints(){
    
    }
 
+}
+
+
+function generateCircles(){
+    
+      gDim = random(height,height*3);
+      circles = [];
+      
+      let x = random(width);
+      let y = random(height);
+      let off = random(height/10,height/10*2);
+      for(let i = 0; i < 5; i++){
+         
+         gDim-=off;
+         circles.push({x,y,gDim});
+         }
+}
+
+function drawCircles(){
+   stroke(248,42,130,10);
+         strokeWeight(5);
+         noFill();
+         for(let p of circles){
+            ellipse(p.x,p.y,p.gDim,p.gDim);
+         }
+}
+
+function createBrush(){
+   diam = height/1.5;
+   brush = createGraphics(diam*2,diam*2);
+   brush.clear();
+   brush.translate(brush.width/2,brush.height/2);
+   brush.noFill();
+   brush.stroke(248,42,130,60);
+   brush.strokeWeight(10);
+   brush.ellipse(0,0,diam,diam);
 }
