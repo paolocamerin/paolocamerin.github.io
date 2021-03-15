@@ -262,7 +262,7 @@ if(saving || hide){
    //text("Press 'H' to show menu",width/10,height/10*9);
    }else{
       textSize(16);
-      text("Press 'M' to switch between modes \nPress 'R' to reset \nPress 'H' to hide menu \nPress 'F' to freeze and unfreeze \nPress 'S' to save the image", width/30*15,height/10*8);
+      text("Press SPACE to generate new seed (Only mode 1)\nPress 'M' to switch between modes\nPress 'R' to reset(mode 2-3)\nPress 'H' to hide menu\nPress 'F' to freeze and unfreeze (Only mode 1)\nPress 'S' to save the image", width/30*15,height/10*8);
       textSize(36);
       text("Mode: " + mode, width/30*20,height/10*9.5);
    }
