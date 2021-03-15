@@ -28,6 +28,8 @@ let noiseSizeSlider, noiseResSlider,incrSlider;
 let can;
 let gDim = 1000;
 
+let accentColor;
+
 function preload(){
    f = loadFont("/visual_identity_21_3/Assets/Proxima Nova Extrabold.otf");
    fr = loadFont("/visual_identity_21_3/Assets/ProximaNova Regular.otf");
@@ -38,17 +40,17 @@ function setup(){
 //createCanvas(windowWidth,windowHeight/2);
 can = createCanvas(windowWidth,windowHeight);
 
-
+accentColor = color(242,50,130);
 
 ang = random(100); 
 //rectMode(CENTER);
 //imageMode(CENTER);
 noiseSizeSlider = createSlider(1, 400, 200, 1);
-noiseSizeSlider.position(width/10,height/10*8.5);
 noiseResSlider = createSlider(1, 600, 400, 1);
-noiseResSlider.position(width/10*2,height/10*8.5);
 incrSlider = createSlider(0.000005, 0.0001, 0.00005, 0.00001);
-incrSlider.position(width/10*3,height/10*8.5);
+noiseSizeSlider.position(width/30*3,height/10*8);
+noiseResSlider.position(noiseSizeSlider.x+noiseSizeSlider.width+30,height/10*8);
+incrSlider.position(noiseResSlider.x+noiseResSlider.width+30,height/10*8);
 
 textFont(f);
 createBrush();
@@ -78,8 +80,8 @@ function draw(){
    //stroke("#F82C82");
    //stroke(248,42,130,);
    drawCircles();
-
-   fill(248,42,130);
+   accentColor.levels[3] = 255; //Set alpha value
+   fill(accentColor.levels[0],accentColor.levels[1],accentColor.levels[2],accentColor.levels[3]);
   
    for(let i = 0; i < curves.length; i++){
       
@@ -272,9 +274,9 @@ if(saving || hide){
 
 function windowResized(){
 resizeCanvas(windowWidth,windowHeight);
-noiseSizeSlider.position(width/10,height/10*8.5);
-noiseResSlider.position(width/10*2,height/10*8.5);
-incrSlider.position(width/10*3,height/10*8.5);
+noiseSizeSlider.position(width/30*3,height/10*8);
+noiseResSlider.position(noiseSizeSlider.x+noiseSizeSlider.width+30,height/10*8);
+incrSlider.position(noiseResSlider.x+noiseResSlider.width+30,height/10*8);
 createTextPoints();
 createBrush();
 }
@@ -284,7 +286,8 @@ for(let c of curves){
 for(let p of c){
    let d = p5.Vector.sub(mousePos,createVector(p.x,p.y));
   strokeWeight(20);
-   stroke(248,42,130,40); 
+  accentColor.levels[3]=40;
+   stroke(accentColor.levels[0],accentColor.levels[1],accentColor.levels[2],accentColor.levels[3]); 
 if(d.mag()<diam/2){
    //print(d);
    if(showPoints && !saving){
@@ -370,8 +373,9 @@ function hideSliders(){
 
 function showSliders(){
    if(saving){
-      print("Saving!!!! Showing inside");
+      print("Saving!!!! Hiding sliders for export");
    }else if(!hide){
+      noStroke();
       fill(245);
       textSize(16);  
       text("Displacement",noiseSizeSlider.x,noiseSizeSlider.y+labelOffY);
@@ -436,7 +440,8 @@ function generateCircles(){
 }
 
 function drawCircles(){
-   stroke(248,42,130,10);
+   accentColor.levels[3]=20;
+   stroke(accentColor.levels[0],accentColor.levels[1],accentColor.levels[2],accentColor.levels[3]);
          strokeWeight(5);
          noFill();
          for(let p of circles){
@@ -450,7 +455,10 @@ function createBrush(){
    brush.clear();
    brush.translate(brush.width/2,brush.height/2);
    brush.noFill();
-   brush.stroke(248,42,130,60);
+   accentColor.levels[3]=40;
+   brush.stroke(accentColor.levels[0],accentColor.levels[1],accentColor.levels[2],accentColor.levels[3]);
+
+   print(accentColor);
    brush.strokeWeight(10);
    brush.ellipse(0,0,diam,diam);
 }
