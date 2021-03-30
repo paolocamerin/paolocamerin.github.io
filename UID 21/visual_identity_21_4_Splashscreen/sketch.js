@@ -31,9 +31,9 @@ let gDim = 1000;
 let accentColor;
 
 function preload(){
-   f = loadFont("/visual_identity_21_3/Assets/Proxima Nova Extrabold.otf");
-   fr = loadFont("/visual_identity_21_3/Assets/ProximaNova Regular.otf");
-   socialImg = loadImage("/visual_identity_21_3/Assets/social_w.png");
+   f = loadFont("/UID 21/visual_identity_21_3/Assets/Proxima Nova Extrabold.otf");
+   fr = loadFont("/UID 21/visual_identity_21_3/Assets/ProximaNova Regular.otf");
+   socialImg = loadImage("/UID 21/visual_identity_21_3/Assets/social_w.png");
 }
 
 function setup(){

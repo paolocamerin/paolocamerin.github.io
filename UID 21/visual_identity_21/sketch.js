@@ -14,7 +14,7 @@ let fontS = 200;
 let spacing = 30;
 let overallBound = 0;
 function preload(){
-   f = loadFont("/visual_identity_21/Assets/Proxima Nova Extrabold.otf")
+   f = loadFont("/UID 21/visual_identity_21/Assets/Proxima Nova Extrabold.otf")
 }
 
 function setup(){

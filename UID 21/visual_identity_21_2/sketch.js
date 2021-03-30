@@ -8,7 +8,7 @@ let ang = 0;
 let word = "UID21";
 
 function preload(){
-   f = loadFont("/visual_identity_21_2/Assets/Proxima Nova Extrabold.otf")
+   f = loadFont("/UID 21/visual_identity_21_2/Assets/Proxima Nova Extrabold.otf")
 }
 
 function setup(){

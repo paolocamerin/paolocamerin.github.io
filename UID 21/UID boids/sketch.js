@@ -13,7 +13,7 @@ let g;
 let f; 
 
 function preload(){
-  f = loadFont("/P5/Assets/Proxima Nova Extrabold.otf")
+  f = loadFont("/UID 21/UID boids/Assets/Proxima Nova Extrabold.otf")
 }
 
 

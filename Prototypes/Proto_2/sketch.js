@@ -1,4 +1,4 @@
-let url = '/Proto_2/assets/IMG_4513.png';
+let url = '/Prototypes/Proto_2/assets/IMG_4513.png';
 let d = 0; 
 let dTarget = 300; 
 let r = 0;
