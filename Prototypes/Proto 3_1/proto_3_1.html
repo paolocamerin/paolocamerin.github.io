@@ -1,0 +1,73 @@
+<html>
+  <head>
+    <!-- Load TensorFlow.js -->
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+    <!-- Load Posenet -->
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/posenet"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.0.0/p5.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.0.0/addons/p5.sound.min.js"></script>
+
+</head>
+
+  <body>
+    <img id='cat' src='/Prototypes/Proto 3_1/images/pose.jpeg'/>
+    <video class="input_video"></video>
+    <canvas class="output_canvas" width="1280px" height="720px"></canvas>
+
+  </body>
+  <!-- Place your code in the script tag below. You can also use an external .js file -->
+  <script id = "script">
+    var flipHorizontal = false;
+
+    var imageElement = document.getElementById('cat');
+    const videoElement = document.getElementsByClassName('input_video')[0];
+    
+
+    posenet.load().then(function(net) {
+      const pose = net.estimateSinglePose(videoElement, {
+        flipHorizontal: true
+      });
+      return pose;
+    }).then(function(pose){
+      console.log(pose);
+    })
+
+    const camera = new Camera(videoElement, {
+  onFrame: async () => {
+    await pose.send({image: videoElement});
+  },
+  width: 1280,
+  height: 720
+});
+camera.start();
+
+
+  </script>
+
+  <script>
+
+      let c;
+      let canvasCtx;
+      let sc;
+      function setup(){
+    
+    sc = document.getElementById('script');
+      c = document.getElementsByClassName('output_canvas')[0];
+      print(sc.pose);
+
+     //canvasCtx.p5.background(21);
+
+
+
+
+      }
+
+      function draw(){
+
+      }
+  
+
+
+  </script>
+</html>
