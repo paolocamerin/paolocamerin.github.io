@@ -1,14 +1,22 @@
 <!doctype html>
 <html>
   <head>
-    <script src="/test_blotter/blotter.min.js"></script>
-    <script src="/test_blotter/channelSplitMaterial.js"></script>
-  </head>
-  <body>
-    <div id="distortion-text"></div>
+    <link rel="stylesheet" type="text/css" href="/test_blotter/style.css">
     
+
+    <script src="/test_blotter/blotter.js"></script>
+    <script src="/test_blotter/blotter.min.js"></script>
+    <script src="/test_blotter/materials/liquidDistortMaterial.js"></script>
+    <script src = "/test_blotter/materials/channelSplitMaterial.js"></script>
+</head>
+  <body>
+    
+    <div id="distortion-text"></div>
+    <h1 data-blotter>I’m Joan, an interaction designer <br> a rambling mind driven by curiosity. Previously, doodling at IDEO, SEAT & EGGS</h1>
+
+
     <script>
-     // BLOTTER - Example 2
+// BLOTTER - Example 2
 var text = new Blotter.Text("observation", {
   family : "'EB Garamond', serif",
   size : 27,
@@ -17,12 +25,10 @@ var text = new Blotter.Text("observation", {
   paddingRight : 40
 });
 
-var material = new Blotter.LiquidDistortMaterial();
+var material = new Blotter.ChannelSplitMaterial();
 
-// Play with the value for uSpeed. Lower values slow
-// down animation, while higher values speed it up. At
-// a speed of 0.0, animation is stopped entirely.
-material.uniforms.uSpeed.value = 0.25;
+
+material.uniforms.uOffset.value = 0.007;
 
 // Try uncommenting the following line to play with
 // the "volatility" of the effect. Higher values here will
@@ -31,14 +37,25 @@ material.uniforms.uSpeed.value = 0.25;
 // the value below 1.0.
 //material.uniforms.uVolatility.value = 0.30;
 
-var blotter = new Blotter(material, {
-  texts : text
+var blotter = new Blotter(material);
+
+const blotterElems = [...document.querySelectorAll('[data-blotter]')];
+blotterElems.forEach((el) => {
+  const text = new Blotter.Text(el.innerHTML , {family : "'EB Garamond', serif",
+  size : 37,
+  fill : "#171717",
+  paddingLeft : 40,
+  paddingRight : 40});
+  blotter.addText(text);
+  // Now delete the html content.
+  el.innerHTML = '';
+  // The created canvas.
+  const scope = blotter.forText(text);
+  // Append it to the main element.
+  scope.appendTo(el);
 });
 
-var elem = document.getElementById("distortion-text");
-var scope = blotter.forText(text);
 
-scope.appendTo(elem);
     </script>
   </body>
 </html>
