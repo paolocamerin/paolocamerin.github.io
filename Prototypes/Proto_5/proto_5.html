@@ -1,0 +1,170 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.0.0/p5.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.0.0/addons/p5.sound.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.3.1/dist/tf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/pose@0.8/dist/teachablemachine-pose.min.js"></script>
+
+</head>
+<body>
+    
+
+
+
+
+<script type="text/javascript">
+   const url = "https://teachablemachine.withgoogle.com/models/NkzugApi/";
+
+
+let model, capture, topPrediction, numClasses, poseData, context
+let videoWidth = 480
+let videoHeight = 360
+let g; 
+
+async function init() {
+  const modelURL = url + "model.json";
+  const metadataURL = url + "metadata.json";
+  model = await tmPose.load(modelURL, metadataURL);
+  numClasses = model.getTotalClasses();
+}
+
+async function predict() {
+  const {
+    pose,
+    posenetOutput
+  } = await model.estimatePose(capture.elt)
+
+  const predictions = await model.predict(posenetOutput)
+  let highestProbability = 0
+  let highestIndex
+  predictions.forEach((item, index) => {
+    if (item.probability > highestProbability) {
+      highestProbability = item.probability
+      highestIndex = index
+    }
+  })
+
+  poseData = pose
+  topPrediction = predictions[highestIndex].className
+
+}
+
+function setup() {
+  const canvas = createCanvas(windowWidth, windowHeight);
+  context = canvas.elt.getContext('2d')
+  capture = createCapture(VIDEO)
+  capture.size(videoWidth, videoHeight)
+  capture.hide()
+  g = createGraphics(width,height);
+  textSize(20)
+  
+
+  init()
+}
+
+async function draw() {
+  background(220)
+  
+
+  image(g,0,0,width,height);
+
+
+  if (poseData) {
+   const minPartConfidence = 0.5;
+      tmPose.drawKeypoints(poseData.keypoints, minPartConfidence, context);
+      tmPose.drawSkeleton(poseData.keypoints, minPartConfidence, context); 
+  }
+
+  
+
+  /************************
+    Add class logic here
+  ************************/
+  strokeWeight(4)
+  stroke(0)
+  fill(255)
+  text(topPrediction, 20, 30)
+  
+  
+  
+  
+  
+  await predict()
+}
+
+function drawBody(){
+g.push();
+  g.translate(g.width/2,g.height/2);
+  g.rotate(frameCount/1000);
+  let dis = 50; 
+  g.stroke("#7515F5");
+  g.fill("#FF3415");
+  for(let i = 0; i < 15; i ++){
+    if(musicOn){
+
+    }
+    g.ellipse(dis*i,0,200,200);  
+  }
+  g.pop();
+
+    for (let i = 0; i < poses.length; i += 1) {
+      
+      const skeleton = poses[i].skeleton;
+      const pose = poses[i].pose;
+
+    g.fill(200);
+    g.textSize(24);
+    g.text(totalCircleNumber,20,20);
+    g.text(skeleton.length,20,50);
+
+
+      g.stroke(col);
+      g.noFill();
+      g.ellipse(pose.nose.x*scaleFactor,pose.nose.y*scaleFactor+50,d,d*1.5);
+      // For every skeleton, loop through all body connections
+      for (let j = 0; j < skeleton.length; j += 1) {
+        //print(skeleton[j]);
+        const partA = skeleton[j][0];
+        const partB = skeleton[j][1];
+        let aX = partA.position.x*scaleFactor;
+        let aY = partA.position.y*scaleFactor;
+        let bX = partB.position.x*scaleFactor;
+        let bY = partB.position.y*scaleFactor;
+        g.stroke(col);
+       
+       
+          
+          for(let n = 0; n < totalCircleNumber/skeleton.length; n++){
+            let f =  map(n,0,totalCircleNumber/skeleton.length,.2,.8);
+            if(ell){
+              g.ellipse(lerp(aX,bX,f),lerp(aY,bY,f),100,100);
+            }else{
+              g.push();
+              g.translate(lerp(aX,bX,f),lerp(aY,bY,f));
+              g.beginShape();
+              for(let v = 0; v < 3; v++){
+                vertex(50*cos(map(v,0,3,0,TAU)),50*sin(map(v,0,3,0,TAU)));
+              }
+              g.endShape(CLOSE);
+              g.pop();
+            }
+            
+          }
+        
+          g.stroke(bw,100);
+        g.line(aX,aY,bX,bY);
+
+      }
+    }
+}
+</script>
+</body>
+</html>

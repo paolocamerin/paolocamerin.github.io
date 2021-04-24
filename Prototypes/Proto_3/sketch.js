@@ -4,14 +4,15 @@ let poses;
 let scaleFactor = 3;
 let col; 
 let bw = 245;
-let thickness = 3;
-let n = 2; 
+let thickness = 5;
+let mode = 2; 
 let d = 50;
 let totalCircleNumber = 40;
 let debug = false;
 let g;
 let ell = true;
 
+let musicOn = false;
 // When the model is loaded
 
 
@@ -21,6 +22,9 @@ function setup(){
    createCanvas(windowWidth/3*2, windowHeight/3*2); 
     video = createCapture(VIDEO);
     video.size(width/scaleFactor, height/scaleFactor);
+
+    resizeCanvas(windowHeight*video.width/video.height,windowHeight);
+
     //video.hide();
     g = createGraphics(width,height);
     poseNet  = ml5.poseNet(video,{
@@ -46,11 +50,11 @@ poseNet.on('pose', (results) => {
   });
 
 
-  col = color(245,245,245);
+  col = color(250,80,20);
 }
 
 function draw(){
-background(21);
+background(255,180,20);
 
 g.strokeWeight(thickness);
 
@@ -61,7 +65,7 @@ if(poses){
 //g.fill(21,10);
 //g.rect(0,0,width,height);
 g.clear();
-drawSkeleton(n);
+drawSkeleton(mode);
 
 image(g,0,0,width,height);
 
@@ -102,6 +106,7 @@ function drawSkeleton(num) {
     case 0:
       break;
   case 1:
+  
     for (let i = 0; i < poses.length; i += 1) {
      print(poses[0]); 
       const skeleton = poses[i].skeleton;
@@ -136,12 +141,27 @@ function drawSkeleton(num) {
   break;
 
   case 2: 
+
+  g.push();
+  g.translate(g.width/2,g.height/2);
+  g.rotate(frameCount/1000);
+  let dis = 50; 
+  g.stroke("#7515F5");
+  g.fill("#FF3415");
+  for(let i = 0; i < 15; i ++){
+    if(musicOn){
+
+    }
+    //g.ellipse(dis*i,0,200,200);  
+  }
+  g.pop();
+
     for (let i = 0; i < poses.length; i += 1) {
       
       const skeleton = poses[i].skeleton;
       const pose = poses[i].pose;
 
-      g.fill(200);
+    g.fill(200);
     g.textSize(24);
     g.text(totalCircleNumber,20,20);
     g.text(skeleton.length,20,50);
