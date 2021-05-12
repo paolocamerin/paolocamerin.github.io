@@ -5,6 +5,7 @@ html, body {
 }
 canvas {
   display: block;
+  overflow: hidden;
 }
 
 h1{

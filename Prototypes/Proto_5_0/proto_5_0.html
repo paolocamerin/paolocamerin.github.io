@@ -1,0 +1,420 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.0.0/p5.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.0.0/addons/p5.sound.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.3.1/dist/tf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/pose@0.8/dist/teachablemachine-pose.min.js"></script>
+
+</head>
+<body>
+    
+
+
+
+
+<script type="text/javascript">
+   const url = "https://teachablemachine.withgoogle.com/models/NkzugApi/";
+
+
+let model, capture, topPrediction, numClasses, poseData, context
+let vid;
+let videoWidth = 480
+let videoHeight = 360
+let g; 
+let rigthArm = [6,8,10];
+let leftArm = [5,7,9];
+let leftLeg = [11,13,15];
+let rightLeg = [12,14,16];
+let head = [0];
+let body = [5,6,12,11];
+let skeleton  = [head,rigthArm, leftArm, leftLeg, rightLeg, body];
+let shapes =[];
+let segRes = 10; 
+let mode = 0;
+let maxMode = 2;
+
+async function init() {
+  const modelURL = url + "model.json";
+  const metadataURL = url + "metadata.json";
+  model = await tmPose.load(modelURL, metadataURL);
+  numClasses = model.getTotalClasses();
+}
+
+async function predict() {
+  const {
+    pose,
+    posenetOutput
+  } = await model.estimatePose(capture.elt) //Uncomment for webcam usage
+//} = await model.estimatePose(vid.elt)
+
+  const predictions = await model.predict(posenetOutput)
+  let highestProbability = 0
+  let highestIndex
+  predictions.forEach((item, index) => {
+    if (item.probability > highestProbability) {
+      highestProbability = item.probability
+      highestIndex = index
+    }
+  })
+
+  poseData = pose
+  topPrediction = predictions[highestIndex].className
+
+}
+
+function setup() {
+  const canvas = createCanvas(windowWidth, windowHeight,WEBGL);
+  context = canvas.elt.getContext('2d')
+  
+  capture = createCapture(VIDEO)
+  capture.size(videoWidth, videoHeight)
+  capture.hide()
+  
+
+
+  
+  /*
+  vid = createVideo(
+    ['/Prototypes/Proto_5/Test.mp4'],
+    vidLoad
+  );
+  */
+  g = createGraphics(width,height);
+ 
+  colorMode(HSB);
+  g.rectMode(CENTER);
+  g.colorMode(HSB,360,100,100);
+  g.strokeWeight(10); 
+
+  for(let i = 0; i < 20; i++){
+    shapes.push(new floatingShape(createVector(random(width),random(height)),random(50,100)));
+  }
+  textSize(20)
+  
+
+  init()
+}
+
+async function draw() {
+  
+  translate(width/2,-height/2);
+  rotateY(PI);  
+
+  switch(mode){
+  case 0:
+  g.background("#9DE4B5");
+  for(let sh of shapes){
+  sh.move();
+  sh.display();
+  }
+  if (poseData) {
+   const minPartConfidence = 0.5;
+      //tmPose.drawKeypoints(poseData.keypoints, minPartConfidence, context);
+      //tmPose.drawSkeleton(poseData.keypoints, minPartConfidence, context); 
+     //print(poseData);
+     //print(tmPose);
+     generateBody(skeleton,poseData);
+  }
+  await predict();
+  break;
+
+  case 1:
+  g.background("#FFE660");
+  for(let sh of shapes){
+  sh.move();
+  sh.display();
+  }
+    break;
+
+  }
+  
+  
+  
+  
+  image(g,0,0,width,height);
+  
+
+  /************************
+    Add class logic here
+  ************************/
+ 
+  
+
+  
+  
+  
+  
+  
+}
+
+
+
+function vidLoad() {
+  vid.loop();
+  vid.volume(0);
+  vid.size(videoWidth, videoHeight);
+}
+
+function generateBody(points,data){
+
+  let scaleFactor = 2;
+  
+  stroke(21);
+  
+  for(let part of skeleton){
+    if(part == 0){
+      let v = data.keypoints[part[0]].position;
+     g.noFill();
+      g.stroke("#FF1515");
+      g.ellipse(v.x*scaleFactor,v.y*scaleFactor,100,100);
+    
+    }else if (part == skeleton[skeleton.length-1]){
+      
+      g.fill(245);
+      g.beginShape();
+      for(let i = 0; i < part.length; i++){
+      let s = data.keypoints[part[i]].score;
+      let v = createVector(data.keypoints[part[i]].position.x,data.keypoints[part[i]].position.y);
+      if(s>=0.5){
+       
+       //Draw lines
+        if(i!=0){
+        let a = createVector(data.keypoints[part[i-1]].position.x,data.keypoints[part[i-1]].position.y).mult(scaleFactor);
+        let b = createVector(data.keypoints[part[i]].position.x,data.keypoints[part[i]].position.y).mult(scaleFactor);
+          
+        drawSegment(a,b,segRes);
+      }else{
+        let a = createVector(data.keypoints[part[i]].position.x,data.keypoints[part[i]].position.y).mult(scaleFactor);
+        let b = createVector(data.keypoints[part[part.length-1]].position.x,data.keypoints[part[part.length-1]].position.y).mult(scaleFactor);
+          
+        drawSegment(a,b,segRes);
+      }
+
+      //draw skeleton segments
+        //g.vertex(v.x*scaleFactor,v.y*scaleFactor);
+      }
+      
+      }
+    g.endShape(CLOSE); 
+
+    }else{
+      g.noFill();
+      
+      g.beginShape();
+      for(let i = 0; i < part.length; i++){
+      let s = data.keypoints[part[i]].score;
+      let v = createVector(data.keypoints[part[i]].position.x,data.keypoints[part[i]].position.y);
+      if(s>=0.5){
+       
+       //Draw lines
+        if(i!=0){
+        let a = createVector(data.keypoints[part[i-1]].position.x,data.keypoints[part[i-1]].position.y).mult(scaleFactor);
+        let b = createVector(data.keypoints[part[i]].position.x,data.keypoints[part[i]].position.y).mult(scaleFactor);
+     
+        drawSegment(a,b,segRes);
+      }
+
+      //draw skeleton segments
+        //g.vertex(v.x*scaleFactor,v.y*scaleFactor);
+      }
+      
+      }
+    g.endShape(); 
+  }
+    }
+    
+}
+
+function drawSegment(a,b,resolution){
+
+  g.stroke("#FF1515");
+  g.noFill();
+let rotationAmount = p5.Vector.sub(a,b).heading();
+let dist = p5.Vector.dist(a,b);
+g.push();
+  g.translate(a.x,a.y);
+  g.rotate(rotationAmount);
+    for(let j = 0; j < resolution; j++){
+      g.push();
+      g.line(lerp(0,-dist,map(j,0,resolution,0,1)),30,lerp(0,-dist,map(j,0,resolution,0,1)),-30);
+      g.pop();
+    }
+    
+    //line(0,0,-dist,0);
+    g.pop();
+}
+
+class floatingShape{
+  constructor(position,size){
+    this.p = position;
+    this.s = size;
+    this.d = p5.Vector.random2D();
+    this.c = color(random(360),80,90);
+    this.r = random(2)
+    this.incr = random(-.05,.05);
+    this.seed = random(2000000);
+  }
+
+  move(){
+    switch (mode){
+      case 0: 
+      this.p.add(this.d);
+    if(this.p.x > width+this.s){
+      this.p.x = -this.s;
+    }
+    if(this.p.x <-this.s){
+      this.p.x = width+this.s;
+    }
+    if(this.p.y > height+this.s){
+      this.p.y = -this.s;
+    }
+    if(this.p.y < -this.s){
+      this.p.y = height+this.s;
+    }
+
+    this.r+=this.incr;
+      break;
+
+      case 1:
+        randomSeed(this.seed);
+        this.incr = random(.05);
+        this.s+=this.incr*100;
+        this.r = QUARTER_PI;
+        this.p = createVector(width/2,height/2);
+        if(this.s>=width*1.5){
+        this.s = 0;
+        }
+        ;
+    }
+    
+  }
+  display(){
+    switch (mode){
+      case 0: 
+    g.noStroke();
+    g.fill(this.c);
+   
+    break;
+    case 1:
+    g.stroke("#7275BC");
+    g.noFill();
+    break; 
+
+  }
+
+  g.push();
+    g.translate(this.p.x,this.p.y);
+    g.rotate(this.r);
+    g.rect(0,0,this.s,this.s);
+    g.pop();
+}
+}
+
+function keyPressed(){
+  if(keyCode == UP_ARROW){
+    mode++;
+    mode = constrain(mode,0,maxMode-1);
+  }
+  if(keyCode == DOWN_ARROW){
+    mode--;
+    mode = constrain(mode,0,maxMode-1);
+  }
+}
+/*
+0: {score: 0.9986031651496887, part: "nose", position: {…}}
+1: {score: 0.9934774041175842, part: "leftEye", position: {…}}
+2: {score: 0.9869094491004944, part: "rightEye", position: {…}}
+3: {score: 0.7863946557044983, part: "leftEar", position: {…}}
+4: {score: 0.5987538695335388, part: "rightEar", position: {…}}
+5: {score: 0.9981131553649902, part: "leftShoulder", position: {…}}
+6: {score: 0.9979144930839539, part: "rightShoulder", position: {…}}
+7: {score: 0.9869198799133301, part: "leftElbow", position: {…}}
+8: {score: 0.9882959723472595, part: "rightElbow", position: {…}}
+9: {score: 0.8843284845352173, part: "leftWrist", position: {…}}
+10: {score: 0.7366328835487366, part: "rightWrist", position: {…}}
+11: {score: 0.9975094795227051, part: "leftHip", position: {…}}
+12: {score: 0.9959816932678223, part: "rightHip", position: {…}}
+13: {score: 0.8860830068588257, part: "leftKnee", position: {…}}
+14: {score: 0.8830621838569641, part: "rightKnee", position: {…}}
+15: {score: 0.07385524362325668, part: "leftAnkle", position: {…}}
+16: {score: 0.23813588917255402, part: "rightAnkle", position: {…}}
+
+function drawBody(){
+g.push();
+  g.translate(g.width/2,g.height/2);
+  g.rotate(frameCount/1000);
+  let dis = 50; 
+  g.stroke("#7515F5");
+  g.fill("#FF3415");
+  for(let i = 0; i < 15; i ++){
+    if(musicOn){
+
+    }
+    g.ellipse(dis*i,0,200,200);  
+  }
+  g.pop();
+
+    for (let i = 0; i < poses.length; i += 1) {
+      
+      const skeleton = poses[i].skeleton;
+      const pose = poses[i].pose;
+
+    g.fill(200);
+    g.textSize(24);
+    g.text(totalCircleNumber,20,20);
+    g.text(skeleton.length,20,50);
+
+
+      g.stroke(col);
+      g.noFill();
+      g.ellipse(pose.nose.x*scaleFactor,pose.nose.y*scaleFactor+50,d,d*1.5);
+      // For every skeleton, loop through all body connections
+      for (let j = 0; j < skeleton.length; j += 1) {
+        //print(skeleton[j]);
+        const partA = skeleton[j][0];
+        const partB = skeleton[j][1];
+        let aX = partA.position.x*scaleFactor;
+        let aY = partA.position.y*scaleFactor;
+        let bX = partB.position.x*scaleFactor;
+        let bY = partB.position.y*scaleFactor;
+        g.stroke(col);
+       
+       
+          
+          for(let n = 0; n < totalCircleNumber/skeleton.length; n++){
+            let f =  map(n,0,totalCircleNumber/skeleton.length,.2,.8);
+            if(ell){
+              g.ellipse(lerp(aX,bX,f),lerp(aY,bY,f),100,100);
+            }else{
+              g.push();
+              g.translate(lerp(aX,bX,f),lerp(aY,bY,f));
+              g.beginShape();
+              for(let v = 0; v < 3; v++){
+                vertex(50*cos(map(v,0,3,0,TAU)),50*sin(map(v,0,3,0,TAU)));
+              }
+              g.endShape(CLOSE);
+              g.pop();
+            }
+            
+          }
+        
+          g.stroke(bw,100);
+        g.line(aX,aY,bX,bY);
+
+      }
+    }
+}
+
+
+*/
+</script>
+</body>
+</html>
