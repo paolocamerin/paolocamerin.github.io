@@ -34,7 +34,7 @@ let segRes = 10;
 let mode = 0;
 let maxMode = 3;
 let logo; 
-
+let bs = 0; 
 
 function preload(){
   logo = loadImage("/Prototypes/Proto_5_1/logo.png");
@@ -75,9 +75,16 @@ strokeJoin(ROUND)
   
  if(mode == 0){
   background(245);
-
+  bs= 0;
  }else{
-  background("#FFE660");
+  if(bs<width*2){
+    fill("#FFE660")
+    bs+=50;
+  ellipse(width/2,height/2,bs,bs);
+  } else{
+    background("#FFE660");
+  
+  } 
   
  }
   for(let sh of shapes){
@@ -173,6 +180,8 @@ function mousePressed() {
     fullscreen(!fs);
   }
 }
+
+
 function windowResized(){
   resizeCanvas(windowWidth,windowHeight);
 }
