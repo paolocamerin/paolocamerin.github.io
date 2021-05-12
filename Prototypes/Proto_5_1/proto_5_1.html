@@ -57,7 +57,7 @@ createCanvas(windowWidth, windowHeight);
   strokeWeight(10); 
 strokeJoin(ROUND)
   for(let i = 0; i < 20; i++){
-    shapes.push(new floatingShape(createVector(random(width),random(height)),random(50,100)));
+    shapes.push(new floatingShape(createVector(random(width),random(height)),300));
   }
   textSize(20)
   
@@ -109,8 +109,10 @@ class floatingShape{
 
   move(){
     
-     
-        this.s+=this.incr*100;
+     if(mode == 1){
+      this.s+=this.incr*100;
+       
+     }
         this.r = QUARTER_PI;
         this.p = createVector(width/2,height/2);
         if(this.s>=width*1.5){
