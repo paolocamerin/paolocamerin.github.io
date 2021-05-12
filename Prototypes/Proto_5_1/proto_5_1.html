@@ -32,7 +32,7 @@ let g;
 let shapes =[];
 let segRes = 10; 
 let mode = 0;
-let maxMode = 2;
+let maxMode = 3;
 
 
 
@@ -67,8 +67,13 @@ strokeJoin(ROUND)
 
  function draw() {
   
- 
+ if(mode == 0){
+  background(245);
+
+ }else{
   background("#FFE660");
+  
+ }
   for(let sh of shapes){
   sh.move();
   sh.display();
@@ -99,7 +104,8 @@ strokeJoin(ROUND)
 class floatingShape{
   constructor(position,size){
     this.p = position;
-    this.s = size;
+    this.ts = size;
+    this.s = 0;
     this.d = p5.Vector.random2D();
     this.c = color(random(360),80,90);
     this.r = random(2)
@@ -108,25 +114,33 @@ class floatingShape{
   }
 
   move(){
-    
-     if(mode == 1){
-      this.s+=this.incr*100;
-       
+    if(mode == 2){
+      this.ts = 300;
+      this.s = lerp(this.s,this.ts,0.2);
+    }else if(mode == 3){
+      this.ts+=this.incr*100;
+      this.s = lerp(this.s,this.ts,0.2);
      }
         this.r = QUARTER_PI;
         this.p = createVector(width/2,height/2);
         if(this.s>=width*1.5){
         this.s = 0;
+        this.ts = 0;
         }
         
     
     
   }
   display(){
- 
+  if(mode < 2 ){
+noStroke();
+noFill();
+  } else{
     stroke("#7275BC");
     noFill();
  
+  } 
+    
   push();
   translate(this.p.x,this.p.y);
   rotate(this.r);
@@ -138,11 +152,11 @@ class floatingShape{
 function keyPressed(){
   if(keyCode == UP_ARROW){
     mode++;
-    mode = constrain(mode,0,maxMode-1);
+    mode = constrain(mode,0,100);
   }
   if(keyCode == DOWN_ARROW){
     mode--;
-    mode = constrain(mode,0,maxMode-1);
+    mode = constrain(mode,0,100);
   }
 }
 
