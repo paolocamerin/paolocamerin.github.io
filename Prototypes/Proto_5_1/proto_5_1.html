@@ -33,6 +33,12 @@ let shapes =[];
 let segRes = 10; 
 let mode = 0;
 let maxMode = 3;
+let logo; 
+
+
+function preload(){
+  logo = loadImage("/Prototypes/Proto_5_1/logo.png");
+}
 
 
 
@@ -78,7 +84,7 @@ strokeJoin(ROUND)
   sh.move();
   sh.display();
   }
-
+image(logo,20,20,logo.width/5,logo.height/5);
  }
  
 
