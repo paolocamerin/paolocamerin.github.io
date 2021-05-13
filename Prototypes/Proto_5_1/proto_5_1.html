@@ -31,11 +31,22 @@ let g;
 
 let shapes =[];
 let segRes = 10; 
-let mode = 0;
+let mode = 2;
 let maxMode = 3;
 let logo; 
 let bs = 0; 
+let defaultSize = 300; 
+let numberOfSides = 4;
 
+let randomRotation = false;
+let randomScale = false;
+
+let animateRotation = false;
+let animateScale = false; 
+
+let mic; 
+let volume = 0;
+let micInputOn = false;
 function preload(){
   logo = loadImage("/Prototypes/Proto_5_1/logo.png");
 }
@@ -43,10 +54,10 @@ function preload(){
 
 
 function setup() {
-createCanvas(windowWidth, windowHeight);
- 
-
-
+  let cnv = createCanvas(windowWidth, windowHeight);
+  
+mic = new p5.AudioIn();
+mic.start();
 
   
   /*
@@ -63,7 +74,7 @@ createCanvas(windowWidth, windowHeight);
   strokeWeight(10); 
 strokeJoin(ROUND)
   for(let i = 0; i < 20; i++){
-    shapes.push(new floatingShape(createVector(random(width),random(height)),300));
+    shapes.push(new floatingShape(createVector(width/2,height/2),defaultSize));
   }
   textSize(20)
   
@@ -79,6 +90,7 @@ strokeJoin(ROUND)
  }else{
   if(bs<width*2){
     fill("#FFE660")
+    background(245);
     bs+=50;
   ellipse(width/2,height/2,bs,bs);
   } else{
@@ -88,10 +100,59 @@ strokeJoin(ROUND)
   
  }
   for(let sh of shapes){
-  sh.move();
+  sh.move(shapes.indexOf(sh));
   sh.display();
   }
 image(logo,20,20,logo.width/5,logo.height/5);
+
+//runtime Interactions
+if(keyIsPressed){
+  if(key === 'd'){
+    for(let f of shapes){
+f.ts-=10;
+f.s-=10;
+print(f.ts)
+   
+    }
+   
+  }
+  if(key === 'g'){
+    for(let f of shapes){
+    f.ts+=10;
+    f.s+=10;
+   print(f.ts)
+    }
+  }
+    if(key === 'e'){
+    for(let f of shapes){
+      f.rotationOffset-=PI/100;
+
+      print(f.rotationOffset)
+   
+    }
+   
+  }
+  if(key === 't'){
+    for(let f of shapes){
+    f.rotationOffset+=PI/100;
+   print(f.rotationOffset)
+    }
+  }
+
+}
+
+volume = mic.getLevel();
+
+
+fill(21);
+noStroke();
+  text(mode,20,100);
+  text(shapes.length,20,130);
+  text("animate rotation = "+animateRotation,20,160);
+  text("animate scale = "+animateScale,20,190);
+  text("random scale = " + randomScale ,20,220);
+  text("random rotation = " + randomRotation ,20,250);
+  text("Mic Volume = " + volume ,20,280);
  }
  
 
@@ -121,33 +182,63 @@ class floatingShape{
     this.s = 0;
     this.d = p5.Vector.random2D();
     this.c = color(random(360),80,90);
-    this.r = random(2)
-    this.incr = random(.05);
+    this.r = 0;
+    this.tr = 0;
+    this.rotationOffset = 0;
+    this.sizeOffset  = random(1000);
+    this.randIncr = random(3);
+    this.incr = 3; 
 
   }
 
-  move(){
-    if(mode == 2){
-      this.ts = 300;
-      this.s = lerp(this.s,this.ts,0.2);
-    }else if(mode == 3){
-      this.ts+=this.incr*100;
-      this.s = lerp(this.s,this.ts,0.2);
-     }
-        this.r = QUARTER_PI;
-        this.p = createVector(width/2,height/2);
-        if(this.s>=width*1.5){
-        this.s = 0;
-        this.ts = 0;
+  move(index){
+
+
+
+    
+    //animate rotation
+        if(animateRotation){
+          if(randomRotation){
+            this.rotationOffset+=this.randIncr/300;
+          }else{
+            this.rotationOffset+=this.incr/300;
+          }
+          }
+    //animate scale
+    if(animateScale){
+      if(randomScale){
+        this.sizeOffset+=this.randIncr;
+      }else{
+        this.sizeOffset+=this.incr;
+      }
+          
         }
-        
+    let mappedVol = 0; 
+    if(micInputOn){
+      mappedVol = map(volume, 0,0.5,0,100)*(index+2);
+    }
+    //animate position
+    
+
+    this.s = lerp(this.s,this.ts+this.sizeOffset+mappedVol,0.2);
+    
+   
+    this.r = lerp(this.r,this.rotationOffset,0.2);
+    
+    if(this.s>=width*1.5){
+      this.s = 0; 
+      this.ts = 0; 
+      this.sizeOffset = 0; 
+    }
     
     
   }
+
+
   display(){
   if(mode < 2 ){
-noStroke();
-noFill();
+    noStroke();
+    noFill();
   } else{
     stroke("#7275BC");
     noFill();
@@ -157,7 +248,13 @@ noFill();
   push();
   translate(this.p.x,this.p.y);
   rotate(this.r);
-  rect(0,0,this.s,this.s);
+  beginShape();
+    for(let i = 0; i < numberOfSides; i++){
+      let v = createVector(this.s*cos(TAU/numberOfSides*i),this.s*sin(TAU/numberOfSides*i));
+      vertex(v.x,v.y);
+    }
+  endShape(CLOSE);
+  //rect(0,0,this.s,this.s);
   pop();
 }
 }
@@ -171,8 +268,86 @@ function keyPressed(){
     mode--;
     mode = constrain(mode,0,100);
   }
-}
 
+  if(key == "7"){
+    if(shapes.length>1){
+      shapes.pop();
+    }
+     }
+
+     if(key == "1"){
+        animateRotation=!animateRotation;
+      }
+      if(key == "2"){
+        animateScale=!animateScale;  
+      }
+      if(key == "3"){
+        micInputOn=!micInputOn;  
+
+        userStartAudio();
+      }
+      if(key == "8"){
+        shapes.push(new floatingShape(shapes[shapes.length-1].p,shapes[shapes.length-1].ts));
+      }
+
+      if(key == "9"){
+
+        numberOfSides--;
+        numberOfSides = constrain(numberOfSides,2,40);
+
+      }
+
+      if(key == "0"){
+        numberOfSides++;
+        numberOfSides = constrain(numberOfSides,2,40);
+      }
+
+
+      if(key == 'f'){
+ //*/
+        if(randomScale){
+            for(let sh of shapes){
+            sh.sizeOffset = 0;
+            sh.ts = 200;
+          }
+          randomScale=false;
+          }else{
+            for(let sh of shapes){
+            
+            sh.sizeOffset = random(1000);
+            sh.ts = 100;
+
+          }
+          randomScale=true;
+        }
+   // */
+    
+  }
+
+  if(key == 'r'){
+    if(randomRotation){
+    for(let sh of shapes){
+      sh.rotationOffset = 0;
+    }
+    randomRotation=false; 
+  }else{
+    for(let sh of shapes){
+      sh.rotationOffset = random(TAU);
+    }
+    randomRotation=true;
+
+  }
+  }
+
+  
+}
+/*
+1 and 2 control the number of shapes
+9 and 0 the number of sides
+"E" and "T" the rotation
+"UP" and "DOWN" the selected mode
+"D" and "G" the size
+*/
 
 function mousePressed() {
   if (mouseX > 0 && mouseX < 100 && mouseY > 0 && mouseY < 100) {
