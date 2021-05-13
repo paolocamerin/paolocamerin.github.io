@@ -35,7 +35,7 @@ let mode = 2;
 let maxMode = 3;
 let logo; 
 let bs = 0; 
-let defaultSize = 300; 
+let defaultSize = 100; 
 let numberOfSides = 4;
 
 let randomRotation = false;
@@ -44,9 +44,15 @@ let randomScale = false;
 let animateRotation = false;
 let animateScale = false; 
 
+let constRotOff = false;
+let constScalOff = false;
+
 let mic; 
 let volume = 0;
 let micInputOn = false;
+let debug = false; 
+let vertMargin = 100;
+
 function preload(){
   logo = loadImage("/Prototypes/Proto_5_1/logo.png");
 }
@@ -73,7 +79,7 @@ mic.start();
   colorMode(HSB,360,100,100);
   strokeWeight(10); 
 strokeJoin(ROUND)
-  for(let i = 0; i < 20; i++){
+  for(let i = 0; i < 8; i++){
     shapes.push(new floatingShape(createVector(width/2,height/2),defaultSize));
   }
   textSize(20)
@@ -109,8 +115,26 @@ image(logo,20,20,logo.width/5,logo.height/5);
 if(keyIsPressed){
   if(key === 'd'){
     for(let f of shapes){
+      //f.sizeOffset-=10;
 f.ts-=10;
-f.s-=10;
+//f.s-=10;
+print(f.ts)
+   
+    }
+   
+  }
+  if(key === 'b'){
+    for(let f of shapes){
+   f.sizeOffset++;
+    
+   print(f.ts)
+    }
+  }
+
+  if(key === 'c'){
+    for(let f of shapes){
+      f.sizeOffset--;
+
 print(f.ts)
    
     }
@@ -118,8 +142,9 @@ print(f.ts)
   }
   if(key === 'g'){
     for(let f of shapes){
-    f.ts+=10;
-    f.s+=10;
+    //f.sizeOffset+=10;
+      f.ts+=10;
+    //f.s+=10;
    print(f.ts)
     }
   }
@@ -143,16 +168,21 @@ print(f.ts)
 
 volume = mic.getLevel();
 
+if(debug){
+  fill(21);
+  noStroke();
+  vertMargin = 100; 
+  text(mode,20,vertMargin+=30);
+  text(shapes.length,20,vertMargin+=30);
+  text("animate rotation = "+animateRotation,20,vertMargin+=30);
+  text("animate scale = "+animateScale,20,vertMargin+=30);
+  text("random scale = " + randomScale ,20,vertMargin+=30);
+  text("random rotation = " + randomRotation ,20,vertMargin+=30);
+  text("constant scale = " + constScalOff ,20,vertMargin+=30);
+  text("constant rotation = " + constRotOff ,20,vertMargin+=30);
+  text("Mic Volume = " + volume ,20,vertMargin+=30);
 
-fill(21);
-noStroke();
-  text(mode,20,100);
-  text(shapes.length,20,130);
-  text("animate rotation = "+animateRotation,20,160);
-  text("animate scale = "+animateScale,20,190);
-  text("random scale = " + randomScale ,20,220);
-  text("random rotation = " + randomRotation ,20,250);
-  text("Mic Volume = " + volume ,20,280);
+}
  }
  
 
@@ -185,7 +215,7 @@ class floatingShape{
     this.r = 0;
     this.tr = 0;
     this.rotationOffset = 0;
-    this.sizeOffset  = random(1000);
+    this.sizeOffset  = 50;
     this.randIncr = random(3);
     this.incr = 3; 
 
@@ -220,12 +250,24 @@ class floatingShape{
     //animate position
     
 
-    this.s = lerp(this.s,this.ts+this.sizeOffset+mappedVol,0.2);
+    if(constScalOff){
+      this.s = lerp(this.s,this.ts+this.sizeOffset*(index+1)+mappedVol,0.2);
+    }else if(randomScale){
+      this.s = lerp(this.s,this.ts+this.sizeOffset*(index+this.randIncr)+mappedVol,0.2);
+    }else{
+      this.s = lerp(this.s,this.ts+this.sizeOffset+mappedVol,0.2);
+    }
+
+    if(constRotOff){
+      this.r = lerp(this.r,this.rotationOffset*(index+1)/10,0.2);
+    }else{
+      this.r = lerp(this.r,this.rotationOffset,0.2);
+    }
+
+  let diagonal = sqrt(width/2*width/2+height/2*height/2)*1.2;
+  this.ts = constrain(this.ts,20,width*2);
     
-   
-    this.r = lerp(this.r,this.rotationOffset,0.2);
-    
-    if(this.s>=width*1.5){
+    if(this.sizeOffset>=diagonal){
       this.s = 0; 
       this.ts = 0; 
       this.sizeOffset = 0; 
@@ -282,6 +324,12 @@ function keyPressed(){
         animateScale=!animateScale;  
       }
       if(key == "3"){
+        constScalOff=!constScalOff;  
+      }
+      if(key == "4"){
+        constRotOff=!constRotOff;  
+      }
+      if(key == "5"){
         micInputOn=!micInputOn;  
 
         userStartAudio();
@@ -304,7 +352,8 @@ function keyPressed(){
 
 
       if(key == 'f'){
- //*/
+        randomScale=!randomScale;
+        /*
         if(randomScale){
             for(let sh of shapes){
             sh.sizeOffset = 0;
@@ -320,7 +369,7 @@ function keyPressed(){
           }
           randomScale=true;
         }
-   // */
+    */
     
   }
 
@@ -337,6 +386,10 @@ function keyPressed(){
     randomRotation=true;
 
   }
+  }
+
+  if(key == 'q'){
+    debug=!debug; 
   }
 
   
