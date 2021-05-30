@@ -68,8 +68,11 @@ function setup(){
     for(let i = 0;i < 21; i++){
         repeatSelect.option(i);
     }
-    repeatSelect.selected(1);
     repeatSelect.changed(repetitionsSelectEvent);
+    repeatSelect.selected(20);
+    repetitionsSelectEvent();
+    
+  
 
 
     
@@ -163,7 +166,7 @@ function setup(){
     }
     colourSelect.selected("Black");
     colourSelect.changed(colourSelectionEvent);
-
+        
 
 
     shapeSelect = createSelect();
@@ -171,14 +174,19 @@ function setup(){
     for(let i = 0;i < shapesNames.length; i++){
         shapeSelect.option(shapesNames[i]);
     }
-    shapeSelect.selected("none");
+    
+    shapeSelect.selected('square');
     shapeSelect.changed(shapeSelectionEvent);
+    shapeSelectionEvent();
     imageMode(CENTER);
 
     originX = mainG.width/2;
     originY = mainG.height/2;
+    targetAng = PI/40; 
+
     //updateDrawing();
    //tempG.ellipse(200,200,200,200);
+   
    mainG.image(tempG,mainG.width/2,mainG.height/2,tempG.width,tempG.height);
 
    

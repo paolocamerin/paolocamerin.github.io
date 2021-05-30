@@ -53,7 +53,7 @@ let micInputOn = false;
 let debug = false; 
 let vertMargin = 100;
 let gap = 20; 
-let distributionMode = 2; 
+let distributionMode = 3; 
 function preload(){
   logo = loadImage("/Prototypes/Proto_5_1/logo.png");
 }
@@ -216,7 +216,8 @@ class floatingShape{
     this.sizeOffset  = 50;
     this.randIncr = random(3);
     this.incr = 3; 
-
+    this.waveDriver = false; 
+    this.osc = 0; 
   }
 
   move(index){
@@ -234,7 +235,10 @@ class floatingShape{
           }
     //animate scale
     if(animateScale){
-      if(randomScale){
+      if(this.waveDriver){
+        this.sizeOffset+=8*sin((index+1)/5+this.osc);
+        this.osc+=0.04;
+      }else if(randomScale){
         this.sizeOffset+=this.randIncr;
       }else{
         this.sizeOffset+=this.incr;
@@ -326,21 +330,32 @@ function keyPressed(){
 
       if(key == '3'){
 
-        switch(distributionMode%3){
+        switch(distributionMode%4){
             case 0:
             gap = 30;
             for(let sh of shapes){
               sh.sizeOffset=gap*(shapes.indexOf(sh));
             }
             break;
-            case 1: 
+            case 1:
+            gap = 30;
+            for(let sh of shapes){
+            
+              sh.sizeOffset=gap*(shapes.indexOf(sh));
+              sh.waveDriver = true;
+            }
+            break; 
+            case 2: 
             
             for(let sh of shapes){
               gap = random(100);
               sh.sizeOffset=gap*(shapes.indexOf(sh));
+              sh.waveDriver = false;
             }
             break;
-            case 2: 
+            
+
+            case 3: 
             gap = 0;
             for(let sh of shapes){
               sh.sizeOffset=0;
@@ -348,6 +363,7 @@ function keyPressed(){
               sh.ts=defaultSize;
             }
             break; 
+            
         }
 
         distributionMode++;

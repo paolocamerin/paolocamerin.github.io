@@ -52,8 +52,8 @@ async function predict() {
   const {
     pose,
     posenetOutput
-  } = await model.estimatePose(capture.elt) //Uncomment for webcam usage
-//} = await model.estimatePose(vid.elt)
+  //} = await model.estimatePose(capture.elt) //Uncomment for webcam usage
+} = await model.estimatePose(vid.elt)
 
   const predictions = await model.predict(posenetOutput)
   let highestProbability = 0
@@ -69,24 +69,26 @@ async function predict() {
   topPrediction = predictions[highestIndex].className
 
 }
+function preload(){
 
+}
 function setup() {
   const canvas = createCanvas(windowWidth, windowHeight,WEBGL);
   context = canvas.elt.getContext('2d')
   
-  capture = createCapture(VIDEO)
-  capture.size(videoWidth, videoHeight)
-  capture.hide()
+  //capture = createCapture(VIDEO)
+  //capture.size(videoWidth, videoHeight)
+  //capture.hide()
   
-
-
-  
-  /*
   vid = createVideo(
-    ['/Prototypes/Proto_5/Test.mp4'],
+    ['/Prototypes/Proto_5_0/Test.mp4'],
     vidLoad
   );
-  */
+
+  
+  
+  
+  
   g = createGraphics(width,height);
  
   colorMode(HSB);
