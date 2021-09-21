@@ -17,6 +17,7 @@ function preload(){
   imgs.push(loadImage('1.png'));
   imgs.push(loadImage('2.png'));
   imgs.push(loadImage('3.png'));
+  imgs.push(loadImage('4.png'));
   print(imgs);
 }
 
@@ -137,6 +138,18 @@ if(!cam){
   initializeCam();
 }
 }
+
+
+if(key === 'f' || key === 'F'){
+  
+    let fs = fullscreen();
+    fullscreen(!fs);
+  
+}
+}
+
+function windowResized(){
+  resizeCanvas(windowWidth,windowHeight);
 }
 
 
