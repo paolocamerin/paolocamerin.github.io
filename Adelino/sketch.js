@@ -7,6 +7,12 @@ let maxParticles = 50;
 let cam; 
 let photomode = false; 
 let constraints;
+
+let debug = false; 
+
+let sizeSlider;
+let partSlider;
+
 function preload(){
   for(let i = 1; i< 4; i++){
     
@@ -45,6 +51,11 @@ function setup() {
   for(let i = 0; i < maxParticles; i++){
     particles.push(new Particle(createVector(width/2,height/2),imgs[floor(random(imgs.length))]));
   }
+
+  sizeSlider = createSlider(200,1000,600,5);
+  sizeSlider.position(100,height-100);
+  partSlider = createSlider(50,300,150,1);
+  partSlider.position(100,height-200);
 }
 
 function draw() {
@@ -68,21 +79,34 @@ function draw() {
    
   //fill(21);
   if(photomode){
-    image(main,width/2,height/4*3,imageSize,imageSize);
+    image(main,width/2,height-imageSize*.45,imageSize,imageSize);
   }else{
     image(main,width/2,height/2,imageSize,imageSize);
   }
 
   
   //rect(width/2,height/2,300,300);
-  
+
+  if(debug){
+    sizeSlider.show();
+    partSlider.show();
+  }else{
+    sizeSlider.hide();
+    partSlider.hide();
+  }
+  imageSize = sizeSlider.value();
+  maxParticles = partSlider.value();
+
+  if(particles.length>maxParticles){
+    particles.shift();
+    }
+
+    
 }
 
 function mouseDragged(){
 particles.push(new Particle(createVector(mouseX,mouseY),imgs[floor(random(imgs.length))]));
-if(particles.length>maxParticles){
-particles.shift();
-}
+
 }
 
 
@@ -145,6 +169,11 @@ if(key === 'f' || key === 'F'){
     let fs = fullscreen();
     fullscreen(!fs);
   
+}
+if(key === 'd' || key === 'D'){
+  
+  debug = !debug; 
+
 }
 }
 
