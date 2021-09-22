@@ -101,7 +101,7 @@ function draw() {
     particles.shift();
     }
 
-    
+
 }
 
 function mouseDragged(){
