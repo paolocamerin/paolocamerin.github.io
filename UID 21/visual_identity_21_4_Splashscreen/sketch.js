@@ -79,7 +79,7 @@ function draw(){
    //noStroke();
    //stroke("#F82C82");
    //stroke(248,42,130,);
-   drawCircles();
+   //drawCircles();
    accentColor.levels[3] = 255; //Set alpha value
    fill(accentColor.levels[0],accentColor.levels[1],accentColor.levels[2],accentColor.levels[3]);
   
