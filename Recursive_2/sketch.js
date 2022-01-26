@@ -9,7 +9,7 @@ function setup() {
   //rectMode(CENTER);
 
   for(let i = 0; i < 10; i++){
-  ran.push(floor(random(100,300)));
+  ran.push(floor(random(100,200)));
   }
   print(ran);
 }
@@ -18,7 +18,8 @@ function draw() {
   background(220);
   //randomSeed(123123);
 
-  drawRectangle(0,0,width,height,8,height/2+(height/4)*sin(frameCount/ran[6]*noise(frameCount/ran[7])));
+  drawRectangle(0,0,width,height,7,height/2+(height/4)*sin(frameCount/ran[6])*noise(frameCount/ran[7]));
+
 
 }
 
@@ -47,13 +48,13 @@ function drawRectangle(x,y,w,h,depth,mid){
       if(depth%2 === 0){
         //horizontal split
         //console.log("splitting horizontal");
-        drawRectangle(x  , y , mid, h, depth,h/2+(h/4)*sin(frameCount/ran[1]*noise(frameCount/ran[2])));
-        drawRectangle(x+mid  , y , w-mid, h,depth,h/2+(h/4)*sin(frameCount/ran[3]*noise(frameCount/ran[5])));
+        drawRectangle(x  , y , mid, h, depth,h/2+(h/4)*sin(frameCount/ran[1])*noise(frameCount/ran[2]));
+        drawRectangle(x+mid  , y , w-mid, h,depth,h/2+(h/4)*sin(frameCount/ran[3])*noise(frameCount/ran[5]));
       }else{
         //vertical split
         //console.log("splitting veritcal");
-        drawRectangle(x  , y , w, mid, depth,w/2+(w/4)*sin(frameCount/ran[2]*noise(frameCount/ran[4])));
-        drawRectangle(x  , y+mid , w, h-mid,depth,w/2+(w/4)*sin(frameCount/ran[5]*noise(frameCount/ran[9])));
+        drawRectangle(x  , y , w, mid, depth,w/2+(w/4)*sin(frameCount/ran[2])*noise(frameCount/ran[4]));
+        drawRectangle(x  , y+mid , w, h-mid,depth,w/2+(w/4)*sin(frameCount/ran[5])*noise(frameCount/ran[9]));
 
       }
     
