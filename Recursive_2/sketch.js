@@ -9,13 +9,13 @@ function setup() {
   //rectMode(CENTER);
 
   for(let i = 0; i < 10; i++){
-  ran.push(floor(random(100,200)));
+  ran.push(floor(random(50,150)));
   }
   print(ran);
 }
 
 function draw() {
-  background(220);
+  background(245);
   //randomSeed(123123);
 
   drawRectangle(0,0,width,height,7,height/2+(height/4)*sin(frameCount/ran[6])*noise(frameCount/ran[7]));
@@ -30,7 +30,7 @@ function drawRectangle(x,y,w,h,depth,mid){
   stroke(0);
   strokeWeight(2);
 
-  //noFill();
+  // noFill();
   fill(245);
   rect(x,y,w,h);
   //text(depth, x+w/2,y+h/2);
@@ -58,10 +58,12 @@ function drawRectangle(x,y,w,h,depth,mid){
 
       }
     
+     
     
     
 
   }
+  
   //console.log("End of function");
   
 }
