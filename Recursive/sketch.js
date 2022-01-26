@@ -1,6 +1,8 @@
 let can; 
 
 let ran =[];
+
+
 function setup() {
 
 
@@ -9,7 +11,7 @@ function setup() {
   //rectMode(CENTER);
 
   for(let i = 0; i < 10; i++){
-  ran.push(floor(random(100,300)));
+  ran.push(floor(random(1000,3000)));
   }
   print(ran);
 }
@@ -18,8 +20,8 @@ function draw() {
   background(220);
   //randomSeed(123123);
 
-  drawRectangle(0,0,width,height,8,height/2+(height/4)*sin(frameCount/ran[6]));
-
+  drawRectangle(0,0,width,height,5,height/2+(height/4)*sin(frameCount/ran[6]));
+  text(frameRate(),20,20);
 }
 
 function drawRectangle(x,y,w,h,depth,mid){
