@@ -67,3 +67,7 @@ function drawRectangle(x,y,w,h,depth,mid){
   //console.log("End of function");
   
 }
+
+function windowResized(){
+  resizeCanvas(windowWidth*.98,windowHeight*.98);
+}
