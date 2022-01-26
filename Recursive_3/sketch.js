@@ -19,11 +19,11 @@ function draw() {
   //randomSeed(123123);
   if(d%2==0){
     drawRectangle(0,0,width,height,d,height/2+(height/4)*sin(frameCount/ran[6])*noise(frameCount/ran[7]));
-    text("EVEN",20,20);
+    //text("EVEN",20,20);
   }else{
     
     drawRectangle(0,0,width,height,d,width/2+(height/4)*sin(frameCount/ran[6])*noise(frameCount/ran[7]));
-    text("ODD",20,20);
+    //text("ODD",20,20);
   }
  
 
