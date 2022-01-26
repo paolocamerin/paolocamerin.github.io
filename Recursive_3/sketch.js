@@ -33,10 +33,10 @@ function draw() {
 function drawRectangle(x,y,w,h,depth,mid){
 
 
-  fill(245);
-  stroke(0);
-  strokeWeight(2);
-
+  // fill(245);
+   stroke(21);
+   strokeWeight(1);
+  // noStroke();
   // noFill();
   fill(map(h,0,height,0,600),map(w,0,width,0,600),100);
   rect(x,y,w,h);
@@ -45,7 +45,7 @@ function drawRectangle(x,y,w,h,depth,mid){
   fill(21);
   ellipse(x+w/2,y+h/2,5,5);
 
-  //ellipse(x,y,20,20);
+  //ellipse(x,y,5,5);
   if (depth > 1) {  
     // 'level' decreases by 1 at every step and thus makes the terminating condition
     // attainable
