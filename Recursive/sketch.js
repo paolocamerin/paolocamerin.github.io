@@ -2,7 +2,9 @@ let can;
 
 let ran =[];
 function setup() {
-  can = createCanvas(windowWidth, 1000);
+
+
+  can = createCanvas(windowWidth*.98, 1000);
   can.parent("canvasContainer");
   //rectMode(CENTER);
 
