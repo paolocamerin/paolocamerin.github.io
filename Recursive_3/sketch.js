@@ -1,5 +1,5 @@
 let can; 
-
+let d = 9;
 let ran =[];
 function setup() {
 
@@ -17,8 +17,15 @@ function setup() {
 function draw() {
   background(245);
   //randomSeed(123123);
-  
-  drawRectangle(0,0,width,height,7,height/2+(height/4)*sin(frameCount/ran[6])*noise(frameCount/ran[7]));
+  if(d%2==0){
+    drawRectangle(0,0,width,height,d,height/2+(height/4)*sin(frameCount/ran[6])*noise(frameCount/ran[7]));
+    text("EVEN",20,20);
+  }else{
+    
+    drawRectangle(0,0,width,height,d,width/2+(height/4)*sin(frameCount/ran[6])*noise(frameCount/ran[7]));
+    text("ODD",20,20);
+  }
+ 
 
 
 }
@@ -31,7 +38,7 @@ function drawRectangle(x,y,w,h,depth,mid){
   strokeWeight(2);
 
   // noFill();
-  fill(map(h,0,height,0,300),map(w,0,height,0,300),100);
+  fill(map(h,0,height,0,600),map(w,0,width,0,600),100);
   rect(x,y,w,h);
   //text(depth, x+w/2,y+h/2);
   noStroke();
