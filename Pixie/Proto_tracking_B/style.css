@@ -1,0 +1,31 @@
+html, body {
+    margin: 0;
+    padding: 0;
+    height:100%;
+    overflow: hidden;
+  }
+  canvas {
+    display: block;
+    margin: auto;
+    max-width: 100%;
+    border-radius: 64px;
+  }
+  
+.main{
+  width: 100%;
+}
+
+#canvasContainer{
+    margin: 20px auto;
+
+}
+
+.frame{ 
+    position: absolute;
+    margin: 0 50%;
+    transform: translateX(-50%);
+    height: 95%; 
+    
+  
+   
+}

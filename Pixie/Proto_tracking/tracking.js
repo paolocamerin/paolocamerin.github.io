@@ -1,3 +1,7 @@
+
+let polySynth;
+
+
 var colors;
 var capture;
 var trackingData;
@@ -7,8 +11,13 @@ let trail = [];
 let pos;
 let captureTransform;
 let can;
+let bubbles = [];
+
+let notes = ["B4", "C4", "D#4", "F4", "G4", "A5"];
+
+
 function setup() {
-    can = createCanvas(400, windowHeight * .95);
+    can = createCanvas(document.querySelector("img").offsetWidth - 16, document.querySelector("img").offsetHeight - 16);
     can.parent();
     capture = createCapture(VIDEO); //capture the webcam
     capture.position(0, 0); //move the capture to the top left
@@ -29,8 +38,16 @@ function setup() {
     pos = createVector(width / 2, height / 2);
     imageMode(CENTER)
 
+    const resX = width / 3;
+    const resY = height / 5;
+    for (let x = 0; x < 2; x++) {
+        for (let y = 0; y < 4; y++) {
+            bubbles.push(new reactiveElement(createVector((x + 1) * resX, (y + 1) * resY), width / 5, notes[int(random(notes.length - 1))]));
+        }
 
+    }
 
+    polySynth = new p5.PolySynth();
 }
 
 function draw() {
@@ -68,8 +85,8 @@ function draw() {
             mainPoint = trackingData[0];
 
             let tp = createVector(
-                map(mainPoint.x, 0, capture.width, width / 2 - captureTransform.w / 2, width / 2 + captureTransform.w / 2),
-                map(mainPoint.y, 0, capture.height, 0, height)
+                map(mainPoint.x, 0, capture.width, width / 2 - captureTransform.w, width / 2 + captureTransform.w),
+                map(mainPoint.y, capture.height / 2, capture.height - 100, 0, height)
             );
 
             pos.x = lerp(pos.x, tp.x, 0.4);
@@ -86,13 +103,13 @@ function draw() {
 
             rect(pos.x, pos.y, trackingData[0].width, trackingData[0].height, 8);
 
-            trail.push(createVector(pos.x, pos.y));
+            trail.push(createVector(pos.x + trackingData[0].width / 2, pos.y + trackingData[0].height / 2));
 
         }
 
         //print(trackingData.length);
 
-        if (trail.length > 200) {
+        if (trail.length > 100) {
             trail.shift();
         }
 
@@ -117,28 +134,75 @@ function draw() {
     //     p.update();
     //     p.destroy();
     // }
+
+    for (let b of bubbles) {
+        if (trail.length != 0) {
+            b.react(createVector(trail[trail.length - 1].x, trail[trail.length - 1].y));
+        }
+
+        b.display();
+    }
 }
 
 
 
-class bubble {
+class reactiveElement {
     constructor(pos, dim, sound) {
         this.p = pos;
         this.d = dim;
         this.s = sound;
+        this.dOffset = 0;
+        this.f = 0;
     }
 
+    react(cursorPoint) {
 
+        if (cursorPoint) {
+            if (p5.Vector.dist(cursorPoint, this.p) < this.d / 2) {
+                this.dOffset = random(20);
+
+                userStartAudio();
+
+                // note duration (in seconds)
+                let dur = .1;
+
+                // time from now (in seconds)
+                let time = 0;
+
+                // velocity (volume, from 0 to 1)
+                let vel = .5;
+
+                // notes can overlap with each other
+                polySynth.noteAttack(this.s, vel, 0, dur);
+
+                this.f++;
+            } else {
+                this.dOffset = 0;
+            }
+        }
+
+
+
+    }
 
     display() {
         push();
         translate(this.p.x, this.p.y);
-        ellipse(0, 0, this.d, this.d);
+        fill(this.f);
+        ellipse(0, 0, this.d + this.dOffset, this.d + this.dOffset);
         pop();
     }
 
 
 }
+
+
+
+
+
+
+
+
 class Particle {
     constructor(position) {
         this.p = position;
