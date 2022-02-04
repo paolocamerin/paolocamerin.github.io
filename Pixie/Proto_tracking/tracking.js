@@ -22,7 +22,7 @@ let timer = 0;
 let seconds;
 let minutes;
 let overallSeconds = 0;
-let maxTimer = 10;
+let maxTimer = 120;
 
 let pos;
 let captureTransform;
