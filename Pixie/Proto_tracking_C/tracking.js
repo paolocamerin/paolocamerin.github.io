@@ -48,8 +48,8 @@ function setup() {
 
     button = createButton("Start");
     button.parent("canvasContainer");
-
     button.mousePressed(start);
+
     capture = createCapture(VIDEO); //capture the webcam
     capture.position(0, 0); //move the capture to the top left
     capture.style("opacity", 0); // use this to hide the capture later on (change to 0 to hide)...

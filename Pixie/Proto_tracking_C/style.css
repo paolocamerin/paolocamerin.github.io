@@ -47,9 +47,9 @@ button{
   border-radius: 12px;
   border: none;
  
-  width:50%;
-  margin-left:25%;
-  margin-right:25%;
+  width:20%;
+  margin-left:40%;
+  margin-right:40%;
   -ms-transform: translateY(-50%);
   transform: translateY(-50%);
 }
