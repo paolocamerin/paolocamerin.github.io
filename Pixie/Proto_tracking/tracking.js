@@ -4,6 +4,7 @@ let button;
 let state = "timer";
 let attackTime = 0.001;
 let decayTime = 0.2;
+
 let susPercent = 0.3;
 let releaseTime = 0.4;
 let stick;
@@ -18,9 +19,10 @@ let debug = false;
 let timerState = "ready"
 let timerStarted = false;
 let timer = 0;
-let seconds = 5;
-let minutes = 0;
+let seconds;
+let minutes;
 let overallSeconds = 0;
+let maxTimer = 10;
 
 let pos;
 let captureTransform;
@@ -40,7 +42,9 @@ let keysColor;
 let myFont;
 
 function preload() {
-    stick = loadImage("/Pixie/Proto_tracking/stick.png");
+
+    stick = loadImage("/Pixie/Proto_tracking/stick_3.png");
+
     myFont = loadFont("/Pixie/Proto_tracking/Assets/CourierPrime-Regular.ttf");
 
     soundFormats('wav');
@@ -87,9 +91,9 @@ function setup() {
     const resX = width / 3;
     const resY = height / (maxKeys * 1.5);
 
-    backgroundColor = random(colorPalette);
-    bubblesColor = random(colorPalette);
-    keysColor = random(colorPalette);
+    backgroundColor = "#35C2D6";
+    bubblesColor = "#E5F6F9";
+    keysColor = "#E5F6F9";
 
     while (bubblesColor == backgroundColor) {
         bubblesColor = random(colorPalette);
@@ -106,6 +110,12 @@ function setup() {
     polySynth = new p5.PolySynth();
     polySynth.setADSR(attackTime, decayTime, susPercent, releaseTime);
 
+
+    seconds = maxTimer % 60;
+    minutes = (maxTimer - seconds) / 60
+
+    print("minutes = " + minutes);
+    print("seconds = " + seconds);
 
 
     let startSize = 140;
@@ -299,9 +309,9 @@ function draw() {
                         timer = millis();
 
                         sounds[floor(random(4))].play();
-                        randomSeed(overallSeconds);
-                        timerBubbles.splice(int(random(timerBubbles.length - 1)), 1);
-                        //print(timerBubbles.length);
+                        randomSeed(second());
+                        timerBubbles.splice(floor(random(timerBubbles.length - 1)), floor(timerBubbles.length / (maxTimer - overallSeconds)));
+                        print(timerBubbles.length);
                     }
                     if (seconds <= 0 && minutes != 0) {
                         minutes--;
@@ -387,9 +397,9 @@ class reactiveElement {
                 // if (frameCount % 3 === 0) {
                 //     polySynth.noteAttack(this.s, vel, 0, dur);
                 // }
-
-                polySynth.noteAttack(this.s, vel, .1, dur);
-
+                if (!polySynth.isPlaying) {
+                    polySynth.noteAttack(this.s, vel, .1, dur);
+                }
 
 
                 this.d = random(10);
@@ -418,7 +428,7 @@ class reactiveElement {
         rect(0, 0, this.w, this.h + this.d, 10);
         textAlign(CENTER, CENTER);
         textSize(18);
-        fill(245, .5);
+        fill("#35C2D6");
         text(this.s, this.w - 20, this.h / 2);
         pop();
     }
@@ -432,6 +442,47 @@ class reactiveElement {
 
 
 
+
+
+
+function flippedText(string, x, y, s) {
+    push();
+    // translate(width, 0);
+    // scale(-1, 1);
+    textAlign(CENTER, CENTER);
+    textSize(s);
+    text(string, x, y);
+    pop();
+}
+
+
+function start() {
+
+
+
+    if (!timerStarted) {
+        if (!soundTrack.isPlaying()) {
+            soundTrack.play();
+        }
+        timerState = "countDown";
+        button.html("Pause");
+        timerStarted = true;
+    } else {
+        timerState = "paused";
+        button.html("Resume");
+        soundTrack.pause();
+        timerStarted = false;
+    }
+
+
+}
+
+
+function keyPressed() {
+    if (key === 'd' || key === 'D') {
+        debug = !debug;
+    }
+}
 
 class Particle {
     constructor(position) {
@@ -475,41 +526,3 @@ class Particle {
 
 
 
-function flippedText(string, x, y, s) {
-    push();
-    // translate(width, 0);
-    // scale(-1, 1);
-    textAlign(CENTER, CENTER);
-    textSize(s);
-    text(string, x, y);
-    pop();
-}
-
-
-function start() {
-
-
-
-    if (!timerStarted) {
-        if (!soundTrack.isPlaying()) {
-            soundTrack.play();
-        }
-        timerState = "countDown";
-        button.html("Pause");
-        timerStarted = true;
-    } else {
-        timerState = "paused";
-        button.html("Resume");
-        soundTrack.pause();
-        timerStarted = false;
-    }
-
-
-}
-
-
-function keyPressed() {
-    if (key === 'd' || key === 'D') {
-        debug = !debug;
-    }
-}

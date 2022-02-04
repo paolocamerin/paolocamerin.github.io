@@ -11,7 +11,7 @@ let pos;
 let n = 0;
 let timerState = "ready"
 let can;
-
+let colorPalette = ["#B7B4C7", "#6E2C25", "#376250", "#6B94AF", "#BC7A61", "#CC8548", "#626787", "#365676"];
 
 let timerStarted = false;
 let minutes = 2;
@@ -24,13 +24,18 @@ let trail = [];
 let particles = [];
 
 let star;
-
+let myFont;
 
 let sounds = [];
 let soundTrack;
+
+let backgroundColor = "#DBE6E4";
+
 function preload() {
 
     star = loadImage("Star.png");
+
+    myFont = loadFont("/Pixie/Proto_tracking/Assets/CourierPrime-Regular.ttf");
 
     soundFormats('wav');
     sounds.push(loadSound('/Pixie/Proto_tracking_C/Assets/pop_1'));
@@ -45,6 +50,8 @@ function preload() {
 function setup() {
     can = createCanvas(document.querySelector("img").offsetWidth - 16, document.querySelector("img").offsetHeight - 16);
     can.parent("canvasContainer");
+
+    textFont(myFont);
 
     button = createButton("Start");
     button.parent("canvasContainer");
@@ -77,7 +84,7 @@ function setup() {
     const maxBubbles = 8;
     for (let i = 0; i < maxBubbles; i++) {
         let angle = TAU / maxBubbles;
-        bubbles.push(new reactiveElement(createVector(width / 2 + width / 3 * cos(angle * i + PI / 8), height / 5 * 2 + height / 4 * sin(angle * i + PI / 8)), 70, null));
+        bubbles.push(new reactiveElement(createVector(width / 2 + width / 3 * cos(angle * i + PI / 8), height / 5 * 2 + height / 4 * sin(angle * i + PI / 8)), 70, null, "#378076"));
     }
 
 
@@ -88,8 +95,7 @@ function setup() {
 }
 
 function draw() {
-    background("#E44427");
-    print(button.width);
+    background(backgroundColor);
 
 
     view.viewTransform();
@@ -149,7 +155,7 @@ function draw() {
         pnt.move(bubbles[n].p);
         pnt.display();
     } else {
-        fill(245);
+        fill("#378076");
         noStroke();
         flippedText("Great job!", width / 2, height / 5 * 4, 64);
 
@@ -162,10 +168,12 @@ function draw() {
     if (timerExpired) {
         timerState = "done"
     }
+    noStroke();
     switch (timerState) {
         //ready?
         case "ready":
             txtSize = 64;
+
             displayedTimer = "Ready?"
             break;
         //countdown
@@ -200,7 +208,7 @@ function draw() {
 
     }
 
-
+    fill("#378076");
     flippedText(displayedTimer, width / 2, height / 5 * 4, txtSize);
 
 
@@ -257,7 +265,7 @@ class pointer {
 }
 
 class reactiveElement {
-    constructor(pos, dim, sound) {
+    constructor(pos, dim, sound, col) {
         this.p = pos;
         this.d = dim;
         this.s = sound;
@@ -265,7 +273,7 @@ class reactiveElement {
         this.phase = random(123);
         this.phaseIncr = random(.01, .001);
         this.dOffset = 0;
-        this.f = 0;
+        this.c = col;
         this.timer = 0;
         this.timeLimit = 10000;
         this.active = true;
@@ -277,8 +285,7 @@ class reactiveElement {
         // print("cursor point: " + cursorPoint);
         if (cursorPoint) {
 
-            if (this.isTouching(cursorPoint)) {
-
+            if (this.isTouching(cursorPoint) && timerState == "countDown") {
 
                 if (this.timer < this.timeLimit) {
                     if (brAn.activityLevel(pos) > .005) {
@@ -291,7 +298,7 @@ class reactiveElement {
                         this.dOffset += .1;
 
                         this.timer += deltaTime;
-                        this.f++;
+
 
                     }
 
@@ -303,7 +310,7 @@ class reactiveElement {
                 }
 
 
-            } else {
+            } else if (timerState != "paused") {
                 this.dOffset = 0;
             }
         }
@@ -323,7 +330,8 @@ class reactiveElement {
         translate(this.p.x, this.p.y);
 
         if (this.active) {
-            fill(this.f);
+            // print(this.c);
+            fill(this.c);
             noStroke();
 
 
@@ -333,11 +341,12 @@ class reactiveElement {
             for (let i = 0; i < this.bubbleRes; i++) {
                 const a = TAU / this.bubbleRes;
                 if (this.isTouching(pnt.p)) {
-                    this.excitment = lerp(this.excitment, map(brAn.activity, 0, 100, 0, 2), .02);
+                    this.excitment = lerp(this.excitment, map(brAn.activity, 0, 100, 1, 10), .1);
                 }
-                let xoff = map(cos(a * i + this.phase), -1, 1, 0, this.excitment);
-                let yoff = map(sin(a * i), -1, 1, 0, this.excitment);
-                const r = map(noise(xoff, yoff, this.phase), 0, 1, 20, 40) + this.dOffset;
+
+                let xoff = map(cos(a * i + this.phase) / 2, -1, 1, 0, this.excitment);
+                let yoff = map(sin(a * i - this.phase) / 2, -1, 1, 0, this.excitment);
+                const r = map(noise(xoff, yoff, this.phase), 0, 1, 20, 40 + this.excitment * 10) + this.dOffset;
                 const x = r * cos(a * i);
                 const y = r * sin(a * i);
                 let vec = createVector(x, y);
@@ -431,7 +440,7 @@ function keyPressed() {
 
         n++;
 
-        print(n)
+        // print(n)
     }
 
     if (key === 'd' || key === 'D') {
