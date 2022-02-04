@@ -9,6 +9,7 @@ let trackingData;
 let debug = false;
 let pos;
 let n = 0;
+let timerState = "ready"
 let can;
 
 
@@ -46,6 +47,8 @@ function setup() {
     can.parent("canvasContainer");
 
     button = createButton("Start");
+    button.parent("canvasContainer");
+
     button.mousePressed(start);
     capture = createCapture(VIDEO); //capture the webcam
     capture.position(0, 0); //move the capture to the top left
@@ -86,6 +89,7 @@ function setup() {
 
 function draw() {
     background("#E44427");
+    print(button.width);
 
 
     view.viewTransform();
@@ -152,33 +156,52 @@ function draw() {
     }
 
 
-
+    let txtSize;
     let displayedTimer = '';
 
-
-
-
-    if (!timerExpired && timerStarted) {
-        // print("timer");
-        if (millis() - timer >= 1000) {
-            seconds--;
-            timer = millis();
-        }
-        if (seconds <= 0 && minutes != 0) {
-            minutes--;
-            seconds = 59;
-        }
-        if (minutes == 0 && seconds == 0) {
-            timerExpired = true;
-        }
-        displayedTimer += nf(minutes, 2, 0) + ":" + nf(seconds, 2, 0);
-
-    } else if (timerStarted) {
-        displayedTimer = "Done!"
-    } else {
-        displayedTimer = "Ready?"
+    if (timerExpired) {
+        timerState = "done"
     }
-    flippedText(displayedTimer, width / 2, height / 5 * 4, 64);
+    switch (timerState) {
+        //ready?
+        case "ready":
+            txtSize = 64;
+            displayedTimer = "Ready?"
+            break;
+        //countdown
+        case "countDown":
+            // print("timer");
+            if (millis() - timer >= 1000) {
+                seconds--;
+                timer = millis();
+            }
+            if (seconds <= 0 && minutes != 0) {
+                minutes--;
+                seconds = 59;
+            }
+            if (minutes == 0 && seconds == 0) {
+                timerExpired = true;
+            }
+            txtSize = 64;
+            displayedTimer += nf(minutes, 2, 0) + ":" + nf(seconds, 2, 0);
+
+            break;
+        //pause
+        case "paused":
+            txtSize = 48;
+            displayedTimer += nf(minutes, 2, 0) + ":" + nf(seconds, 2, 0);
+            break;
+        //over
+        case "done":
+            txtSize = 64;
+            displayedTimer = "Done!"
+            break;
+
+
+    }
+
+
+    flippedText(displayedTimer, width / 2, height / 5 * 4, txtSize);
 
 
     // print("Activity = " + brAn.activityLevel(pos));
@@ -421,6 +444,22 @@ function keyPressed() {
 
 
 function start() {
-    soundTrack.play();
-    timerStarted = true;
+
+
+
+    if (!timerStarted) {
+        if (!soundTrack.isPlaying()) {
+            soundTrack.play();
+        }
+        timerState = "countDown";
+        button.html("Pause");
+        timerStarted = true;
+    } else {
+        timerState = "paused";
+        button.html("Resume");
+        soundTrack.pause();
+        timerStarted = false;
+    }
+
+
 }
