@@ -10,16 +10,16 @@ let stick;
 let trackingColors;
 let colorPalette;
 let trackingData;
+let soundtrack;
 let particles = [];
 
 //Timer variables 
-let timerExpired = false;
 let timerState = "ready"
 let timerStarted = false;
 let timer = 0;
 let seconds = 0;
 let minutes = 2;
-
+let overallSeconds = 0;
 
 let pos;
 let captureTransform;
@@ -27,6 +27,8 @@ let can;
 let trail = [];
 let keys = [];
 let sounds = [];
+let timerExpired = false;
+
 let maxKeys = 6;
 let timerBubbles = [];
 let notes = ["B4", "C4", "D#4", "F4", "G4", "A5"];
@@ -87,9 +89,11 @@ function setup() {
     polySynth.setADSR(attackTime, decayTime, susPercent, releaseTime);
 
     colorPalette = ["#B7B4C7", "#6E2C25", "#376250", "#6B94AF", "#BC7A61", "#CC8548", "#626787", "#365676"];
+
     let startSize = 140;
     let maxBubbles = 300;
     let trials = 0;
+
     while (timerBubbles.length < maxBubbles) {
 
         let newPos = createVector(random(width), random(height));
@@ -126,6 +130,10 @@ function setup() {
     }
     backgroundColor = random(colorPalette);
     bubblesColor = random(colorPalette);
+    while (bubblesColor == backgroundColor) {
+        bubblesColor = random(colorPalette);
+    }
+
     print(timerBubbles);
 }
 
@@ -242,9 +250,10 @@ function draw() {
             randomSeed(37678);
             fill(bubblesColor);
             for (let b of timerBubbles) {
+                // if (map(timerBubbles.indexOf(b), 0, timerBubbles.length - 1, 120, 0) > overallSeconds) {
                 noStroke();
-
                 ellipse(b.p.x, b.p.y, b.d, b.d);
+                // }
             }
             break;
     }
@@ -268,7 +277,13 @@ function draw() {
             // print("timer");
             if (millis() - timer >= 1000) {
                 seconds--;
+                overallSeconds++;
                 timer = millis();
+
+                sounds[floor(random(4))].play();
+                randomSeed(overallSeconds);
+                timerBubbles.splice(int(random(timerBubbles.length - 1)), 1);
+                print(timerBubbles.length);
             }
             if (seconds <= 0 && minutes != 0) {
                 minutes--;
