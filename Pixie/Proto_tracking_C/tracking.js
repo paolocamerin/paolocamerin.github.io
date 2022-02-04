@@ -295,7 +295,7 @@ class reactiveElement {
                         }
 
                         // print(this.timer);
-                        this.dOffset += .1;
+                        this.dOffset += map(sin(frameCount / 10), -1, 1, -.1, .3);
 
                         this.timer += deltaTime;
 
@@ -342,6 +342,8 @@ class reactiveElement {
                 const a = TAU / this.bubbleRes;
                 if (this.isTouching(pnt.p)) {
                     this.excitment = lerp(this.excitment, map(brAn.activity, 0, 100, 1, 10), .1);
+                } else {
+                    this.excitment = .5;
                 }
 
                 let xoff = map(cos(a * i + this.phase) / 2, -1, 1, 0, this.excitment);
