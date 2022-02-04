@@ -8,17 +8,18 @@ let susPercent = 0.3;
 let releaseTime = 0.4;
 let stick;
 let trackingColors;
-let colorPalette;
+let colorPalette = ["#B7B4C7", "#6E2C25", "#376250", "#6B94AF", "#BC7A61", "#CC8548", "#626787", "#365676"];
 let trackingData;
 let soundtrack;
 let particles = [];
+let debug = false;
 
 //Timer variables 
 let timerState = "ready"
 let timerStarted = false;
 let timer = 0;
-let seconds = 0;
-let minutes = 2;
+let seconds = 5;
+let minutes = 0;
 let overallSeconds = 0;
 
 let pos;
@@ -31,12 +32,16 @@ let timerExpired = false;
 
 let maxKeys = 6;
 let timerBubbles = [];
-let notes = ["B4", "C4", "D#4", "F4", "G4", "A5"];
+let notes = ["B", "C#", "E", "F", "F#", "G#"];
+
 let backgroundColor;
 let bubblesColor;
+let keysColor;
+let myFont;
 
 function preload() {
     stick = loadImage("/Pixie/Proto_tracking/stick.png");
+    myFont = loadFont("/Pixie/Proto_tracking/Assets/CourierPrime-Regular.ttf");
 
     soundFormats('wav');
     sounds.push(loadSound('/Pixie/Proto_tracking_C/Assets/pop_1'));
@@ -54,6 +59,8 @@ function setup() {
     can = createCanvas(document.querySelector("img").offsetWidth - 16, document.querySelector("img").offsetHeight - 16);
     can.parent();
 
+
+    textFont(myFont);
     button = createButton("Start");
     button.parent("canvasContainer");
     button.mousePressed(start);
@@ -79,16 +86,27 @@ function setup() {
     colorMode(HSB);
     const resX = width / 3;
     const resY = height / (maxKeys * 1.5);
-    for (let i = 0; i < maxKeys; i++) {
-        keys.push(new reactiveElement(createVector(0, resY * (i + 1) * 1.3), notes[int(random(notes.length - 1))], map(i, 0, maxKeys, 0, 255)));
+
+    backgroundColor = random(colorPalette);
+    bubblesColor = random(colorPalette);
+    keysColor = random(colorPalette);
+
+    while (bubblesColor == backgroundColor) {
+        bubblesColor = random(colorPalette);
+    }
+    while (keysColor == backgroundColor) {
+        keysColor = random(colorPalette);
+    }
 
 
+    for (let i = 0; i < notes.length; i++) {
+        keys.push(new reactiveElement(createVector(24, resY * (i + 1) * 1.3), notes[i] + "4", keysColor));
     }
 
     polySynth = new p5.PolySynth();
     polySynth.setADSR(attackTime, decayTime, susPercent, releaseTime);
 
-    colorPalette = ["#B7B4C7", "#6E2C25", "#376250", "#6B94AF", "#BC7A61", "#CC8548", "#626787", "#365676"];
+
 
     let startSize = 140;
     let maxBubbles = 300;
@@ -128,11 +146,6 @@ function setup() {
         }
 
     }
-    backgroundColor = random(colorPalette);
-    bubblesColor = random(colorPalette);
-    while (bubblesColor == backgroundColor) {
-        bubblesColor = random(colorPalette);
-    }
 
     print(timerBubbles);
 }
@@ -167,6 +180,7 @@ function draw() {
 
     switch (state) {
         case "reward":
+
             let mainPoint;
 
             // console.log(trackingData);
@@ -194,8 +208,10 @@ function draw() {
                     noFill();
                     stroke(245);
                     strokeWeight(2);
+                    if (debug) {
+                        rect(pos.x, pos.y, trackingData[0].width, trackingData[0].height, 8);
+                    }
 
-                    rect(pos.x, pos.y, trackingData[0].width, trackingData[0].height, 8);
 
                     trail.push(createVector(pos.x + trackingData[0].width / 2, pos.y + trackingData[0].height / 2));
 
@@ -211,19 +227,32 @@ function draw() {
             } else {
                 trail.shift();
             }
+            if (debug) {
 
-            noFill();
-            stroke(250, 200, 20);
-            strokeWeight(6);
-            strokeJoin(ROUND)
-            beginShape();
-            for (let n of trail) {
-                vertex(n.x, n.y)
+                noFill();
+                stroke(250, 200, 20);
+                strokeWeight(6);
+                strokeJoin(ROUND)
+                beginShape();
+                for (let n of trail) {
+                    vertex(n.x, n.y)
+                }
+                endShape();
+
             }
-            endShape();
 
+            //Draw the keys 
+            for (let k of keys) {
+                if (trail.length != 0) {
+                    k.react(createVector(trail[trail.length - 1].x, trail[trail.length - 1].y));
+                }
+
+                k.display();
+            }
+
+
+            //Draw the stick
             push();
-
             translate(pos.x, pos.y);
             rotate(-PI / 4);
             image(stick, 0, stick.height / 4, stick.width / 2, stick.height / 2);
@@ -236,13 +265,6 @@ function draw() {
             //     p.destroy();
             // }
 
-            for (let k of keys) {
-                if (trail.length != 0) {
-                    k.react(createVector(trail[trail.length - 1].x, trail[trail.length - 1].y));
-                }
-
-                k.display();
-            }
 
             break;
 
@@ -255,63 +277,70 @@ function draw() {
                 ellipse(b.p.x, b.p.y, b.d, b.d);
                 // }
             }
+
+            let txtSize;
+            let displayedTimer = '';
+
+            if (timerExpired) {
+                timerState = "done"
+            }
+            switch (timerState) {
+                //ready?
+                case "ready":
+                    txtSize = 64;
+                    displayedTimer = "Ready?"
+                    break;
+                //countdown
+                case "countDown":
+                    // print("timer");
+                    if (millis() - timer >= 1000) {
+                        seconds--;
+                        overallSeconds++;
+                        timer = millis();
+
+                        sounds[floor(random(4))].play();
+                        randomSeed(overallSeconds);
+                        timerBubbles.splice(int(random(timerBubbles.length - 1)), 1);
+                        //print(timerBubbles.length);
+                    }
+                    if (seconds <= 0 && minutes != 0) {
+                        minutes--;
+                        seconds = 59;
+                    }
+                    if (minutes == 0 && seconds == 0) {
+                        timerExpired = true;
+                    }
+                    txtSize = 64;
+                    displayedTimer += nf(minutes, 2, 0) + ":" + nf(seconds, 2, 0);
+
+                    break;
+                //pause
+                case "paused":
+                    txtSize = 48;
+                    displayedTimer += nf(minutes, 2, 0) + ":" + nf(seconds, 2, 0);
+                    break;
+                //over
+                case "done":
+                    txtSize = 64;
+                    displayedTimer = "Done!"
+                    state = "reward"
+                    button.hide();
+
+                    break;
+
+
+            }
+
+            fill(245);
+            flippedText(displayedTimer, width / 2, height / 5 * 4, txtSize);
+
+
             break;
     }
 
 
 
-    let txtSize;
-    let displayedTimer = '';
 
-    if (timerExpired) {
-        timerState = "done"
-    }
-    switch (timerState) {
-        //ready?
-        case "ready":
-            txtSize = 64;
-            displayedTimer = "Ready?"
-            break;
-        //countdown
-        case "countDown":
-            // print("timer");
-            if (millis() - timer >= 1000) {
-                seconds--;
-                overallSeconds++;
-                timer = millis();
-
-                sounds[floor(random(4))].play();
-                randomSeed(overallSeconds);
-                timerBubbles.splice(int(random(timerBubbles.length - 1)), 1);
-                print(timerBubbles.length);
-            }
-            if (seconds <= 0 && minutes != 0) {
-                minutes--;
-                seconds = 59;
-            }
-            if (minutes == 0 && seconds == 0) {
-                timerExpired = true;
-            }
-            txtSize = 64;
-            displayedTimer += nf(minutes, 2, 0) + ":" + nf(seconds, 2, 0);
-
-            break;
-        //pause
-        case "paused":
-            txtSize = 48;
-            displayedTimer += nf(minutes, 2, 0) + ":" + nf(seconds, 2, 0);
-            break;
-        //over
-        case "done":
-            txtSize = 64;
-            displayedTimer = "Done!"
-            break;
-
-
-    }
-
-    fill(245);
-    flippedText(displayedTimer, width / 2, height / 5 * 4, txtSize);
 
 
 
@@ -320,7 +349,7 @@ function draw() {
 
 
 class reactiveElement {
-    constructor(pos, sound, hue) {
+    constructor(pos, sound, col) {
         this.p = pos;
         this.d = 0;
         this.s = sound;
@@ -328,23 +357,23 @@ class reactiveElement {
         this.w = width / 3 * 2;
         this.h = height / (maxKeys * 2);
         this.dOffset = 0;
-        this.f = color(this.c, 80, 90);
+        this.c = col
     }
 
     react(cursorPoint) {
 
         if (cursorPoint) {
 
-            ellipse(cursorPoint.x, cursorPoint.y, 20, 20);
-            ellipse(this.p.x, this.p.y, 50, 50);
-            print(this.p.x);
-            print(cursorPoint.x);
+            if (debug) {
+                ellipse(cursorPoint.x, cursorPoint.y, 20, 20);
+                ellipse(this.p.x, this.p.y, 50, 50);
+            }
+
             let cursorEntersKey = cursorPoint.x > this.p.x && cursorPoint.x < this.p.x + this.w && cursorPoint.y > this.p.y && cursorPoint.y < this.p.y + this.h;
             if (cursorEntersKey) {
                 this.dOffset = random(20);
+
                 userStartAudio();
-
-
                 // note duration (in seconds)
                 let dur = .1;
 
@@ -355,11 +384,21 @@ class reactiveElement {
                 let vel = .5;
 
                 // notes can overlap with each other
-                polySynth.noteAttack(this.s, vel, 0, dur);
+                // if (frameCount % 3 === 0) {
+                //     polySynth.noteAttack(this.s, vel, 0, dur);
+                // }
+
+                polySynth.noteAttack(this.s, vel, .1, dur);
+
+
+
                 this.d = random(10);
 
             } else {
-                polySynth.noteRelease(this.s, .2);
+                if (polySynth.isPlaying) {
+                    polySynth.noteRelease(this.s, .2);
+                }
+
                 this.dOffset = 0;
                 this.d = 0;
             }
@@ -373,10 +412,14 @@ class reactiveElement {
         push();
         translate(this.p.x, this.p.y - this.d / 2);
         noStroke();
-        fill(this.f);
+        fill(this.c);
         //noFill();
         //stroke(0);
-        rect(0, 0, this.w, this.h + this.d);
+        rect(0, 0, this.w, this.h + this.d, 10);
+        textAlign(CENTER, CENTER);
+        textSize(18);
+        fill(245, .5);
+        text(this.s, this.w - 20, this.h / 2);
         pop();
     }
 
@@ -462,4 +505,11 @@ function start() {
     }
 
 
+}
+
+
+function keyPressed() {
+    if (key === 'd' || key === 'D') {
+        debug = !debug;
+    }
 }
