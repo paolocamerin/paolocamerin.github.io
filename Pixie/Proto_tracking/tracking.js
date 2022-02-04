@@ -22,7 +22,7 @@ let timer = 0;
 let seconds;
 let minutes;
 let overallSeconds = 0;
-let maxTimer = 120;
+let maxTimer = 10;
 
 let pos;
 let captureTransform;
@@ -91,9 +91,9 @@ function setup() {
     const resX = width / 3;
     const resY = height / (maxKeys * 1.5);
 
-    backgroundColor = "#35C2D6";
-    bubblesColor = "#E5F6F9";
-    keysColor = "#E5F6F9";
+    backgroundColor = "#E5F5F9";
+    bubblesColor = "#B5E5E0";
+    keysColor = "#57B9AD";
 
     while (bubblesColor == backgroundColor) {
         bubblesColor = random(colorPalette);
@@ -433,7 +433,7 @@ class reactiveElement {
         rect(0, 0, this.w, this.h + this.d, 10);
         textAlign(CENTER, CENTER);
         textSize(18);
-        fill("#35C2D6");
+        fill(backgroundColor);
         text(this.s, this.w - 20, this.h / 2);
         pop();
     }
