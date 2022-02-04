@@ -279,6 +279,9 @@ function draw() {
             break;
 
         case "timer":
+
+
+
             randomSeed(37678);
             fill(bubblesColor);
             for (let b of timerBubbles) {
@@ -290,6 +293,8 @@ function draw() {
 
             let txtSize;
             let displayedTimer = '';
+            fill(245, .8);
+            rect(0, height / 4 * 3, width, height / 4);
 
             if (timerExpired) {
                 timerState = "done"
@@ -341,7 +346,7 @@ function draw() {
 
             }
 
-            fill(245);
+            fill("#35C2D6");
             flippedText(displayedTimer, width / 2, height / 5 * 4, txtSize);
 
 
