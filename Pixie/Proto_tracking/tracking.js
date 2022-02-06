@@ -95,12 +95,7 @@ function setup() {
     bubblesColor = "#B5E5E0";
     keysColor = "#57B9AD";
 
-    while (bubblesColor == backgroundColor) {
-        bubblesColor = random(colorPalette);
-    }
-    while (keysColor == backgroundColor) {
-        keysColor = random(colorPalette);
-    }
+
 
 
     for (let i = 0; i < notes.length; i++) {
@@ -313,7 +308,7 @@ function draw() {
                         overallSeconds++;
                         timer = millis();
 
-                        sounds[floor(random(4))].play();
+                        sounds[second() % 4].play();
                         randomSeed(second());
                         timerBubbles.splice(floor(random(timerBubbles.length - 1)), floor(timerBubbles.length / (maxTimer - overallSeconds)));
                         print(timerBubbles.length);
