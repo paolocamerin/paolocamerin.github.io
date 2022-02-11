@@ -153,6 +153,8 @@ function setup() {
     }
 
     print(timerBubbles);
+
+    userStartAudio();
 }
 
 function draw() {
@@ -368,6 +370,7 @@ class reactiveElement {
         this.h = height / (maxKeys * 2);
         this.dOffset = 0;
         this.c = col
+        this.hasPlayed = false;
     }
 
     react(cursorPoint) {
@@ -383,32 +386,36 @@ class reactiveElement {
             if (cursorEntersKey) {
                 this.dOffset = random(20);
 
-                userStartAudio();
-                // note duration (in seconds)
-                let dur = .1;
-
-                // time from now (in seconds)
-                let time = 0;
-
-                // velocity (volume, from 0 to 1)
-                let vel = .5;
+                print("playing sound");
 
                 // notes can overlap with each other
                 // if (frameCount % 3 === 0) {
                 //     polySynth.noteAttack(this.s, vel, 0, dur);
                 // }
                 if (!polySynth.isPlaying) {
-                    polySynth.noteAttack(this.s, vel, .1, dur);
+
+                    // note duration (in seconds)
+                    let dur = .1;
+
+                    // time from now (in seconds)
+                    let time = 0;
+
+                    // velocity (volume, from 0 to 1)
+                    let vel = .5;
+                    if (!this.hasPlayed) {
+                        polySynth.noteAttack(this.s, 0, 0);
+                        polySynth.noteRelease(this.s, .2, 0);
+                        this.hasPlayed = true;
+                    }
+
+
                 }
 
 
                 this.d = random(10);
 
             } else {
-                if (polySynth.isPlaying) {
-                    polySynth.noteRelease(this.s, .2);
-                }
-
+                this.hasPlayed = false;
                 this.dOffset = 0;
                 this.d = 0;
             }
@@ -458,11 +465,9 @@ function flippedText(string, x, y, s) {
 
 function start() {
 
-
-
     if (!timerStarted) {
         if (!soundTrack.isPlaying()) {
-            soundTrack.play();
+            soundTrack.play(0, 1, .3);
         }
         timerState = "countDown";
         button.html("Pause");
@@ -473,7 +478,6 @@ function start() {
         soundTrack.pause();
         timerStarted = false;
     }
-
 
 }
 
