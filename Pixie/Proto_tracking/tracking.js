@@ -22,9 +22,13 @@ let timer = 0;
 let seconds;
 let minutes;
 let overallSeconds = 0;
-let maxTimer = 120;
+let maxTimer = 30;
 
 let pos;
+let ppos;
+let m = 0;
+let pp1, pp2;
+
 let captureTransform;
 let can;
 let trail = [];
@@ -86,6 +90,7 @@ function setup() {
     });
 
     pos = createVector(width / 2, height / 2);
+    ppos = pos.copy();
     imageMode(CENTER)
     colorMode(HSB);
     const resX = width / 3;
@@ -159,7 +164,7 @@ function setup() {
 
 function draw() {
 
-    background(backgroundColor);
+
 
 
     push();
@@ -248,23 +253,15 @@ function draw() {
 
             }
 
-            //Draw the keys 
-            for (let k of keys) {
-                if (trail.length != 0) {
-                    k.react(createVector(trail[trail.length - 1].x, trail[trail.length - 1].y));
-                }
 
-                k.display();
-            }
 
 
             //Draw the stick
-            push();
-            translate(pos.x, pos.y);
-            rotate(-PI / 4);
-            image(stick, 0, stick.height / 4, stick.width / 2, stick.height / 2);
 
-            pop();
+            wormBrush(pos.x, pos.y, ppos.x, ppos.y);
+
+            ppos = pos.copy();
+
 
             // for (let p of particles) {
             //     p.display();
@@ -278,7 +275,7 @@ function draw() {
         case "timer":
 
 
-
+            background(backgroundColor);
             randomSeed(37678);
             fill(bubblesColor);
             for (let b of timerBubbles) {
@@ -334,8 +331,10 @@ function draw() {
                 //over
                 case "done":
                     txtSize = 64;
-                    displayedTimer = "Done!"
+                    displayedTimer = ""
                     state = "reward"
+                    background(backgroundColor);
+                    soundTrack.pause();
                     button.hide();
 
                     break;
@@ -358,7 +357,44 @@ function draw() {
 
 }
 
+function wormBrush(x, y, px, py) {
 
+    let v = createVector(x, y);
+    let pv = createVector(px, py);
+
+    let dir = p5.Vector.sub(pv, v);
+    let ang = dir.heading();
+    let tm = dir.limit(50).mag();
+    m = lerp(m, tm, 0.2);
+    if (m < 5) {
+        m = 10;
+    }
+
+    //ellipse(v.x, v.y, 10, 10);
+    let p1 = createVector(
+        v.x + m * cos(ang - HALF_PI),
+        v.y + m * sin(ang - HALF_PI)
+    );
+    let p2 = createVector(
+        v.x + m * cos(ang + HALF_PI),
+        v.y + m * sin(ang + HALF_PI)
+    );
+
+    if (pp1 && pp2) {
+        //stroke(245);
+        noStroke();
+        fill(frameCount % 360, 80, 90);
+        beginShape();
+        vertex(p1.x, p1.y);
+        vertex(p2.x, p2.y);
+        vertex(pp2.x, pp2.y);
+        vertex(pp1.x, pp1.y);
+        endShape(CLOSE);
+    }
+    pp1 = p1;
+    pp2 = p2;
+
+}
 
 class reactiveElement {
     constructor(pos, sound, col) {
@@ -485,6 +521,9 @@ function start() {
 function keyPressed() {
     if (key === 'd' || key === 'D') {
         debug = !debug;
+    }
+    if (key === "s") {
+        soundTrack.pause();
     }
 }
 
