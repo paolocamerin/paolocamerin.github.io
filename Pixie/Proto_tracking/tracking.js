@@ -22,7 +22,7 @@ let timer = 0;
 let seconds;
 let minutes;
 let overallSeconds = 0;
-let maxTimer = 30;
+let maxTimer = 5;
 
 let pos;
 let ppos;
