@@ -1,0 +1,27 @@
+html, body {
+  margin: 0;
+  padding: 0;
+  overflow: hidden; 
+  position: fixed; 
+}
+
+
+
+canvas {
+  display: block;
+}
+
+
+button{
+  color:#FEF8F0; 
+  width: 200px;
+  padding: 12px 24px;
+  /* Purple_primary */
+
+background: #AA21FF;
+/* Purple_primary */
+
+border: 2px solid #AA21FF;
+border-radius: 16px;
+  
+}
