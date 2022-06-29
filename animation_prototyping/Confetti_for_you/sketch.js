@@ -28,9 +28,9 @@ function setup() {
   b.mousePressed(function () {
     addConfetti(width / 2, height / 6, 300);
   });
-  popSound.setVolume(0.2);
+  popSound.setVolume(0.3);
+  trumpetSound.setVolume(0.1);
   noStroke();
- 
 }
 
 function draw() {
@@ -75,17 +75,12 @@ function addConfetti(x, y, n) {
   }
 }
 
-function mouseClicked() {
-
-    let tx = mouseX;
-    let ty = mouseY;
+function mousePressed() {
+  let tx = mouseX;
+  let ty = mouseY;
+  if (ty < height / 3) {
     addConfetti(tx, ty, 300);
-   
-  
-
-  /*
-   */
-  print(touches);
+  }
 }
 
 class confetto {
