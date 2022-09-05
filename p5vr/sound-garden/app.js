@@ -2,13 +2,14 @@ function preload() {
   createVRCanvas();
 }
 let spheres = [];
+let range = 500;
 function setup() {
-  for (let i = 0; i < 150; i++) {
+  for (let i = 0; i < 50; i++) {
     spheres.push({
       p: createVector(
-        random(-2000, 2000),
-        random(-2000, 2000),
-        random(-2000, 2000)
+        random(-range, range),
+        random(-range, range),
+        random(-range, range)
       ),
       d: random(10, 50),
       r: random(50, 200),
