@@ -8,13 +8,12 @@ let minN;
 let maxN;
 let sFact = 1;
 let innerLimit = 20;
-
 function preload() {
   img = loadImage("1.jpg");
 }
 
 function setup() {
-  createCanvas(windowWidth, windowHeight);
+  createCanvas(windowWidth, windowWidth);
   imageMode(CENTER);
 }
 
@@ -48,7 +47,7 @@ function draw() {
 
   let noiseMax = 1;
   randomSeed(123);
-  for (let a = 0; a < TWO_PI; a += radians(random(40, 70))) {
+  for (let a = 0; a < TWO_PI; a += radians(random(10, 70))) {
     let xoff = map(cos(a + phase), -1, 1, 0, noiseMax);
     let yoff = map(sin(a + phase), -1, 1, 0, noiseMax);
     let r = map(noise(xoff, yoff, zoff), 0, 1, minN, maxN);
