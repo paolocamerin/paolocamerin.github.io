@@ -13,7 +13,7 @@ function preload() {
 }
 
 function setup() {
-  createCanvas(windowWidth,windowHeight);
+  createCanvas(windowWidth, windowHeight);
   imageMode(CENTER);
 }
 
@@ -21,9 +21,8 @@ function draw() {
   background(51);
   translate(width / 2, height / 2);
   minN = width / 6;
-  maxN = width / 6 * 3;
+  maxN = (width / 6) * 3;
   //clear();
-
 
   if (dist(mouseX, mouseY, width / 2, height / 2) < 300) {
     sFact = lerp(sFact, 1.4, 0.1);
@@ -35,20 +34,16 @@ function draw() {
 
   noStroke();
   fill(myColour);
-  
-   image(img,0,0,width,height);
+
+  image(img, 0, 0, width, height);
   beginShape();
 
-  vertex(-width/2-offSet, -height/2-offSet);
-  vertex(-width/2-offSet, height/2 + offSet);
-  vertex(width/2 + offSet, height/2 + offSet);
-  vertex(width/2 + offSet, -height/2-offSet);
-  
-  
+  vertex(-width / 2 - offSet, -height / 2 - offSet);
+  vertex(-width / 2 - offSet, height / 2 + offSet);
+  vertex(width / 2 + offSet, height / 2 + offSet);
+  vertex(width / 2 + offSet, -height / 2 - offSet);
+
   beginContour();
-
-
-
 
   let noiseMax = 1;
   randomSeed(123);
@@ -58,25 +53,22 @@ function draw() {
     let r = map(noise(xoff, yoff, zoff), 0, 1, minN, maxN);
     let x = r * sFact * cos(a);
     let y = r * sFact * sin(a);
-     x = constrain(x, -width/2+innerLimit,width/2-innerLimit);
-    y = constrain(y, -height/2+innerLimit,height/2-innerLimit);
+    x = constrain(x, -width / 2 + innerLimit, width / 2 - innerLimit);
+    y = constrain(y, -height / 2 + innerLimit, height / 2 - innerLimit);
     vertex(x, y);
   }
   endContour(CLOSE);
 
-
   endShape();
 
-  phase += map(sFact, 1, 1.4, 0.003, 0.008, );
+  phase += map(sFact, 1, 1.4, 0.003, 0.008);
   zoff += 0.0006;
-  
- 
 }
 
 function windowResized() {
-resizeCanvas(windowWidth, windowWidth*img.height/img.width);
+  resizeCanvas(windowWidth, windowHeight);
 }
 
-function mouseClicked(){
-open("https://www.paolocamerin.com/draw-r","_parent");
+function mouseClicked() {
+  open("https://www.paolocamerin.com/draw-r", "_parent");
 }

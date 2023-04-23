@@ -15,7 +15,7 @@ function preload() {
 function setup() {
   createCanvas(windowWidth, windowHeight);
   imageMode(CENTER);
-  resizeCanvas(windowWidth, (windowWidth * img.height) / img.width);
+  //resizeCanvas(windowWidth, (windowWidth * img.height) / img.width);
 }
 
 function draw() {
@@ -67,7 +67,7 @@ function draw() {
 }
 
 function windowResized() {
-  resizeCanvas(windowWidth, (windowWidth * img.height) / img.width);
+  resizeCanvas(windowWidth, windowWidth);
 }
 
 function mouseClicked() {
