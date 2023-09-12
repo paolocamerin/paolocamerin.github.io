@@ -29,18 +29,11 @@ function setup() {
   earthRadius = 400;
 
   t = loadImage("./assets/8081_earthlights4k.jpg");
-  coordinates = loadJSON("./assets/coordinates.json", () => {
+  const url = "https://paolocamerin.github.io/S-Hero/Assets/coordinates.json";
+  coordinates = loadJSON(url, () => {
     jsonIsLoaded = true;
-    //print("Jseon is loaded!");
-    //print(coordinates.coordinates.length);
-
-    // const lat = radians(52.60985352862849) + PI;
-    // const lon = radians(-0.47936085219706115) + HALF_PI;
-    // print(lon, lat);
-    // const x = earthRadius * sin(lat) * cos(lon);
-    // const y = earthRadius * sin(lat) * sin(lon);
-    // const z = earthRadius * cos(lat);
-    // nodes.push(new node(x, y, z, 5));
+    print("JSON is loaded!");
+    print(coordinates.coordinates);
 
     for (let i = 0; i < coordinates.coordinates.length; i++) {
       const v = latLonToXYZ(
@@ -58,8 +51,6 @@ function setup() {
     ];
     for (let n of nodes) {
       n.findNear();
-
-      //console.log(n.nearNodes);
     }
 
     for (let i = 0; i < 300; i++) {
