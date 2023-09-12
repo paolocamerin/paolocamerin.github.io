@@ -6,7 +6,9 @@ let dataPoints = [];
 let nodes = [];
 let jsonIsLoaded = false;
 let moveDataTo = "connection";
-
+let camYPos = -1000;
+let targetCamYPos = -600;
+let canvas;
 let circles;
 
 function latLonToXYZ(radius, lat, lon) {
@@ -18,19 +20,19 @@ function latLonToXYZ(radius, lat, lon) {
   let x = radius * cos(theta) * cos(phi);
   let y = -radius * sin(theta);
   let z = -radius * cos(theta) * sin(phi);
-  print(x, y, z);
+  // print(x, y, z);
   return createVector(x, y, z);
 }
 
 function setup() {
-  createCanvas(windowWidth, windowHeight, WEBGL);
-  earthRadius = height / 2;
+  canvas = createCanvas(windowWidth, windowHeight, WEBGL);
+  earthRadius = 400;
 
   t = loadImage("./Assets/8081_earthlights4k.jpg", initialiseScene);
   coordinates = loadJSON("./assets/coordinates.json", () => {
     jsonIsLoaded = true;
-    print("Jseon is loaded!");
-    print(coordinates.coordinates.length);
+    //print("Jseon is loaded!");
+    //print(coordinates.coordinates.length);
 
     // const lat = radians(52.60985352862849) + PI;
     // const lon = radians(-0.47936085219706115) + HALF_PI;
@@ -57,7 +59,7 @@ function setup() {
     for (let n of nodes) {
       n.findNear();
 
-      console.log(n.nearNodes);
+      //console.log(n.nearNodes);
     }
 
     for (let i = 0; i < 300; i++) {
@@ -69,7 +71,7 @@ function setup() {
   bezierDetail(32);
 }
 function initialiseScene() {
-  console.log("Loading completed");
+  //console.log("Loading completed");
   noStroke();
 }
 function draw() {
@@ -77,11 +79,12 @@ function draw() {
   clear();
   //Create the sphere with mouse interactions
   const v = createVector(0, 0, 0);
-  orbitControl();
-  cam.setPosition(0, -200, 800);
-  cam.lookAt(-400, -300, 0);
+  targetCamYPos = window.scrollY - 1000;
+  camYPos = lerp(camYPos, targetCamYPos / 2, 0.1);
+  cam.setPosition(0, camYPos, 800);
+  cam.lookAt(-400, 200, -400);
 
-  wheelOffset += 0.0002;
+  wheelOffset += 0.001;
 
   let rotYtarget = map(mouseX, 0, width, -0.2, 0.2) + PI * 0.8 + wheelOffset;
   let rotXtarget = map(mouseY, 0, height, -0.2, 0.2);
@@ -180,7 +183,7 @@ class node {
         control2: c2,
         anchor2: c.p,
       };
-      print("c", c.connections);
+      //print("c", c.connections);
       if (!c.connections.includes(connObj)) {
         this.connections.push(connObj);
       }
@@ -279,4 +282,8 @@ function keyPressed() {
       ? (moveDataTo = "circles")
       : (moveDataTo = "connection");
   }
+}
+
+function windowResized() {
+  resizeCanvas(windowWidth, windowHeight);
 }
