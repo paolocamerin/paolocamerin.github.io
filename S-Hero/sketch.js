@@ -30,7 +30,7 @@ function setup() {
   canvas = createCanvas(windowWidth, windowHeight, WEBGL);
   earthRadius = 400;
 
-  const url = "https://paolocamerin.github.io/S-Hero/Assets/coordinates.json";
+  const url = "https://paolocamerin.github.io/S-Hero/assets/coordinates.json";
   coordinates = loadJSON(url, () => {
     jsonIsLoaded = true;
     print("JSON is loaded!");
