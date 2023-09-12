@@ -23,12 +23,13 @@ function latLonToXYZ(radius, lat, lon) {
   // print(x, y, z);
   return createVector(x, y, z);
 }
-
+function preload() {
+  t = loadImage("./assets/8081_earthlights4k.jpg");
+}
 function setup() {
   canvas = createCanvas(windowWidth, windowHeight, WEBGL);
   earthRadius = 400;
 
-  t = loadImage("./assets/8081_earthlights4k.jpg");
   const url = "https://paolocamerin.github.io/S-Hero/Assets/coordinates.json";
   coordinates = loadJSON(url, () => {
     jsonIsLoaded = true;
