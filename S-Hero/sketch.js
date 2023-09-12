@@ -28,7 +28,7 @@ function setup() {
   canvas = createCanvas(windowWidth, windowHeight, WEBGL);
   earthRadius = 400;
 
-  t = loadImage("./Assets/8081_earthlights4k.jpg", initialiseScene);
+  t = loadImage("./assets/8081_earthlights4k.jpg");
   coordinates = loadJSON("./assets/coordinates.json", () => {
     jsonIsLoaded = true;
     //print("Jseon is loaded!");
@@ -70,10 +70,7 @@ function setup() {
   perspective((PI / 180) * 60, width / height, 0.1, 10000);
   bezierDetail(32);
 }
-function initialiseScene() {
-  //console.log("Loading completed");
-  noStroke();
-}
+
 function draw() {
   //background(10, 10, 30);
   clear();
