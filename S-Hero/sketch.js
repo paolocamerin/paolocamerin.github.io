@@ -69,6 +69,7 @@ function draw() {
   //Create the sphere with mouse interactions
   const v = createVector(0, 0, 0);
   targetCamYPos = window.scrollY - 1000;
+  console.log(window.scrollY);
   camYPos = lerp(camYPos, targetCamYPos / 2, 0.1);
   cam.setPosition(0, camYPos, 800);
   cam.lookAt(-400, 200, -400);
