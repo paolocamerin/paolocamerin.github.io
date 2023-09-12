@@ -4,37 +4,68 @@ let wheelOffset = 0;
 let earthRadius;
 let dataPoints = [];
 let nodes = [];
-
+let jsonIsLoaded = false;
 let moveDataTo = "connection";
 
 let circles;
+
+function latLonToXYZ(radius, lat, lon) {
+  // Convert latitude and longitude from degrees to radians
+  let theta = radians(lat);
+  let phi = radians(lon) + HALF_PI;
+  // print("latAngle (theta) = " + theta + "   Real Lat = " + lat);
+  // print("lonAngle (phi)   = " + phi + "   Real Lon = " + lon);
+  let x = radius * cos(theta) * cos(phi);
+  let y = -radius * sin(theta);
+  let z = -radius * cos(theta) * sin(phi);
+  print(x, y, z);
+  return createVector(x, y, z);
+}
+
 function setup() {
-  t = loadImage("./Assets/8081_earthlights4k.jpg", initialiseScene);
   createCanvas(windowWidth, windowHeight, WEBGL);
   earthRadius = height / 2;
-  for (let i = 0; i < 30; i++) {
-    const lon = random(-PI, PI);
-    const lat = random(-PI, PI);
-    const x = earthRadius * sin(lat) * cos(lon);
-    const y = earthRadius * sin(lat) * sin(lon);
-    const z = earthRadius * cos(lat);
-    nodes.push(new node(x, y, z, 5));
-  }
-  circles = [
-    createVector(width / 4 - width / 2, 0, 0),
-    createVector((width / 4) * 2 - width / 2, 0, 0),
-    createVector((width / 4) * 3 - width / 2, 0, 0),
-  ];
-  for (let n of nodes) {
-    n.findNear();
 
-    console.log(n.nearNodes);
-  }
+  t = loadImage("./Assets/8081_earthlights4k.jpg", initialiseScene);
+  coordinates = loadJSON("./assets/coordinates.json", () => {
+    jsonIsLoaded = true;
+    print("Jseon is loaded!");
+    print(coordinates.coordinates.length);
 
-  for (let i = 0; i < 300; i++) {
-    dataPoints.push(new dataPoint(0, 0, 0));
-  }
+    // const lat = radians(52.60985352862849) + PI;
+    // const lon = radians(-0.47936085219706115) + HALF_PI;
+    // print(lon, lat);
+    // const x = earthRadius * sin(lat) * cos(lon);
+    // const y = earthRadius * sin(lat) * sin(lon);
+    // const z = earthRadius * cos(lat);
+    // nodes.push(new node(x, y, z, 5));
 
+    for (let i = 0; i < coordinates.coordinates.length; i++) {
+      const v = latLonToXYZ(
+        earthRadius,
+        coordinates.coordinates[i].lat,
+        coordinates.coordinates[i].lon
+      );
+
+      nodes.push(new node(v.x, v.y, v.z, random(2, 5)));
+    }
+    circles = [
+      createVector(width / 4 - width / 2, 0, 0),
+      createVector((width / 4) * 2 - width / 2, 0, 0),
+      createVector((width / 4) * 3 - width / 2, 0, 0),
+    ];
+    for (let n of nodes) {
+      n.findNear();
+
+      console.log(n.nearNodes);
+    }
+
+    for (let i = 0; i < 300; i++) {
+      dataPoints.push(new dataPoint(0, 0, 0));
+    }
+  });
+  cam = createCamera(0, 0, 0);
+  perspective((PI / 180) * 60, width / height, 0.1, 10000);
   bezierDetail(32);
 }
 function initialiseScene() {
@@ -45,14 +76,16 @@ function draw() {
   //background(10, 10, 30);
   clear();
   //Create the sphere with mouse interactions
-  const v = createVector(300, 400, 100);
+  const v = createVector(0, 0, 0);
+  orbitControl();
+  cam.setPosition(0, -200, 800);
+  cam.lookAt(-400, -300, 0);
 
-  push();
-  translate(v.x, v.y, v.z);
   wheelOffset += 0.0002;
 
   let rotYtarget = map(mouseX, 0, width, -0.2, 0.2) + PI * 0.8 + wheelOffset;
   let rotXtarget = map(mouseY, 0, height, -0.2, 0.2);
+
   rotX = lerp(rotX, rotXtarget, 0.1);
   rotY = lerp(rotY, rotYtarget, 0.1);
   rotateY(rotY);
@@ -77,8 +110,6 @@ function draw() {
   pop();
   texture(t);
   sphere(earthRadius, 32, 32);
-
-  pop();
 }
 
 class node {
@@ -101,23 +132,27 @@ class node {
   }
   drawConnections() {
     noFill();
-    stroke("#7B1BF9");
+    stroke("#480F93");
     strokeWeight(0.5);
+    let index = 0;
     for (let c of this.connections) {
-      bezier(
-        c.anchor1.x,
-        c.anchor1.y,
-        c.anchor1.z,
-        c.control1.x,
-        c.control1.y,
-        c.control1.z,
-        c.control2.x,
-        c.control2.y,
-        c.control2.z,
-        c.anchor2.x,
-        c.anchor2.y,
-        c.anchor2.z
-      );
+      if (index < 3) {
+        bezier(
+          c.anchor1.x,
+          c.anchor1.y,
+          c.anchor1.z,
+          c.control1.x,
+          c.control1.y,
+          c.control1.z,
+          c.control2.x,
+          c.control2.y,
+          c.control2.z,
+          c.anchor2.x,
+          c.anchor2.y,
+          c.anchor2.z
+        );
+        index++;
+      }
     }
   }
 
@@ -125,7 +160,7 @@ class node {
     for (let n of nodes) {
       if (n != this) {
         let d = p5.Vector.dist(n.p, this.p);
-        if (d < (PI * 2 * earthRadius) / 2 / 6) {
+        if (d < (PI * 2 * earthRadius) / 30) {
           this.nearNodes.push(n);
         }
       }
@@ -173,7 +208,7 @@ class dataPoint {
     translate(this.p.x, this.p.y, this.p.z);
 
     strokeWeight(this.randomThickness);
-    stroke(255, 0.4);
+    stroke(255);
     point(0, 0);
     pop();
   }
@@ -236,10 +271,6 @@ class dataPoint {
 
     return createVector(x, y, z);
   }
-}
-
-function mouseWheel() {
-  wheelOffset += 0.02;
 }
 
 function keyPressed() {
