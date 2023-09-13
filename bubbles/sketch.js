@@ -101,3 +101,7 @@ function noiseToSphere(n0, n1, r) {
 
   return createVector(x, y, z);
 }
+
+function windowResized() {
+  resizeCanvas(windowWidth, windowHeight);
+}
