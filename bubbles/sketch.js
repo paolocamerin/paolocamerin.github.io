@@ -1,7 +1,8 @@
 let bubbles = [];
-
 let rotX = 0;
 let rotY = 0;
+
+let x = 0;
 
 function setup() {
   createCanvas(windowWidth, windowHeight, WEBGL);
