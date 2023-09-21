@@ -21312,8 +21312,8 @@ let Mo = new Ne(),
 const is = new Qf("#7B1BF9", 200, 10);
 is.position.set(-4, 2, -2);
 const yn = new nn(),
-  jr = new xo().load("/world.jpg"),
-  ip = new xo().load("/point.png"),
+  jr = new xo().load("../Globe/world.jpg"),
+  ip = new xo().load("../Globe/point.png"),
   rs = new Of();
 jr.colorSpace = Ve;
 const Yi = new St(40, window.innerWidth / window.innerHeight, 0.1, 1e3),
