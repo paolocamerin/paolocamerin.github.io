@@ -21317,7 +21317,7 @@ const yn = new nn(),
   rs = new Of();
 jr.colorSpace = Ve;
 const qi = new St(40, window.innerWidth / window.innerHeight, 0.1, 1e3),
-  _i = new _o();
+  _i = new _o({ alpha: !0 });
 _i.setSize(window.innerWidth, window.innerHeight);
 _i.setPixelRatio(2);
 document.body.appendChild(_i.domElement);
