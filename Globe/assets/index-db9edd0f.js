@@ -41,7 +41,7 @@
   Yt = 3,
   on = 0,
   _t = 1,
-  Ot = 2,
+  Ut = 2,
   rn = 0,
   kn = 1,
   fs = 2,
@@ -88,7 +88,7 @@
   Gr = 304,
   ji = 306,
   Hr = 1e3,
-  Ut = 1001,
+  Dt = 1001,
   Vr = 1002,
   ft = 1003,
   vs = 1004,
@@ -108,7 +108,7 @@
   Ya = 1018,
   gn = 1020,
   al = 1021,
-  Dt = 1023,
+  It = 1023,
   ol = 1024,
   ll = 1025,
   vn = 1026,
@@ -1210,11 +1210,11 @@ class gt extends Zn {
   constructor(
     e = gt.DEFAULT_IMAGE,
     t = gt.DEFAULT_MAPPING,
-    n = Ut,
-    r = Ut,
+    n = Dt,
+    r = Dt,
     s = At,
     o = oi,
-    a = Dt,
+    a = It,
     l = an,
     c = gt.DEFAULT_ANISOTROPY,
     u = Mn
@@ -1352,7 +1352,7 @@ class gt extends Zn {
         case Hr:
           e.x = e.x - Math.floor(e.x);
           break;
-        case Ut:
+        case Dt:
           e.x = e.x < 0 ? 0 : 1;
           break;
         case Vr:
@@ -1366,7 +1366,7 @@ class gt extends Zn {
         case Hr:
           e.y = e.y - Math.floor(e.y);
           break;
-        case Ut:
+        case Dt:
           e.y = e.y < 0 ? 0 : 1;
           break;
         case Vr:
@@ -1876,7 +1876,7 @@ class no extends gt {
       (this.image = { data: e, width: t, height: n, depth: r }),
       (this.magFilter = ft),
       (this.minFilter = ft),
-      (this.wrapR = Ut),
+      (this.wrapR = Dt),
       (this.generateMipmaps = !1),
       (this.flipY = !1),
       (this.unpackAlignment = 1);
@@ -1889,7 +1889,7 @@ class Fl extends gt {
       (this.image = { data: e, width: t, height: n, depth: r }),
       (this.magFilter = ft),
       (this.minFilter = ft),
-      (this.wrapR = Ut),
+      (this.wrapR = Dt),
       (this.generateMipmaps = !1),
       (this.flipY = !1),
       (this.unpackAlignment = 1);
@@ -6545,7 +6545,7 @@ const na = new qe(),
   aa = new L(),
   Ii = new L(),
   Ni = new L();
-class It extends ct {
+class Nt extends ct {
   constructor(e = new bt(), t = new $i()) {
     super(),
       (this.isMesh = !0),
@@ -7304,7 +7304,7 @@ class Ql extends Sn {
         blending: rn,
       });
     s.uniforms.tEquirect.value = t;
-    const o = new It(r, s),
+    const o = new Nt(r, s),
       a = t.minFilter;
     return (
       t.minFilter === oi && (t.minFilter = At),
@@ -11421,7 +11421,7 @@ void main() {
       alphaTest: { value: 0 },
     },
   },
-  Ft = {
+  Ot = {
     basic: {
       uniforms: dt([
         ie.common,
@@ -11622,9 +11622,9 @@ void main() {
       fragmentShader: we.shadow_frag,
     },
   };
-Ft.physical = {
+Ot.physical = {
   uniforms: dt([
-    Ft.standard.uniforms,
+    Ot.standard.uniforms,
     {
       clearcoat: { value: 0 },
       clearcoatMap: { value: null },
@@ -11696,13 +11696,13 @@ function Ih(i, e, t, n, r, s, o) {
         i.clear(i.autoClearColor, i.autoClearDepth, i.autoClearStencil),
       M && (M.isCubeTexture || M.mapping === ji)
         ? (u === void 0 &&
-            ((u = new It(
+            ((u = new Nt(
               new pi(1, 1, 1),
               new En({
                 name: "BackgroundCubeMaterial",
-                uniforms: jn(Ft.backgroundCube.uniforms),
-                vertexShader: Ft.backgroundCube.vertexShader,
-                fragmentShader: Ft.backgroundCube.fragmentShader,
+                uniforms: jn(Ot.backgroundCube.uniforms),
+                vertexShader: Ot.backgroundCube.vertexShader,
+                fragmentShader: Ot.backgroundCube.fragmentShader,
                 side: _t,
                 depthTest: !1,
                 depthWrite: !1,
@@ -11738,13 +11738,13 @@ function Ih(i, e, t, n, r, s, o) {
         : M &&
           M.isTexture &&
           (c === void 0 &&
-            ((c = new It(
+            ((c = new Nt(
               new es(2, 2),
               new En({
                 name: "BackgroundMaterial",
-                uniforms: jn(Ft.background.uniforms),
-                vertexShader: Ft.background.vertexShader,
-                fragmentShader: Ft.background.fragmentShader,
+                uniforms: jn(Ot.background.uniforms),
+                vertexShader: Ot.background.vertexShader,
+                fragmentShader: Ot.background.fragmentShader,
                 side: on,
                 depthTest: !1,
                 depthWrite: !1,
@@ -12480,7 +12480,7 @@ class ua {
         minFilter: At,
         generateMipmaps: !1,
         type: li,
-        format: Dt,
+        format: It,
         colorSpace: zt,
         depthBuffer: !1,
       },
@@ -12503,7 +12503,7 @@ class ua {
     return r;
   }
   _compileMaterial(e) {
-    const t = new It(this._lodPlanes[0], e);
+    const t = new Nt(this._lodPlanes[0], e);
     this._renderer.compile(t, Cr);
   }
   _sceneToCubeUV(e, t, n, r) {
@@ -12520,7 +12520,7 @@ class ua {
         depthWrite: !1,
         depthTest: !1,
       }),
-      g = new It(new pi(), m);
+      g = new Nt(new pi(), m);
     let v = !1;
     const p = e.background;
     p
@@ -12554,7 +12554,7 @@ class ua {
           e.isRenderTargetTexture === !1 ? -1 : 1))
       : this._equirectMaterial === null && (this._equirectMaterial = da());
     const s = r ? this._cubemapMaterial : this._equirectMaterial,
-      o = new It(this._lodPlanes[0], s),
+      o = new Nt(this._lodPlanes[0], s),
       a = s.uniforms;
     a.envMap.value = e;
     const l = this._cubeSize;
@@ -12588,7 +12588,7 @@ class ua {
         "blur direction must be either latitudinal or longitudinal!"
       );
     const u = 3,
-      d = new It(this._lodPlanes[r], c),
+      d = new Nt(this._lodPlanes[r], c),
       f = c.uniforms,
       m = this._sizeLods[n] - 1,
       g = isFinite(s) ? Math.PI / (2 * m) : (2 * Math.PI) / (2 * _n - 1),
@@ -14621,7 +14621,7 @@ function hf(i, e, t, n, r, s, o) {
       k.morphAttributes.color !== void 0 && (H = 3);
     let ae, oe, ce, ge;
     if (J) {
-      const He = Ft[J];
+      const He = Ot[J];
       (ae = He.vertexShader), (oe = He.fragmentShader);
     } else
       (ae = x.vertexShader),
@@ -14799,7 +14799,7 @@ function hf(i, e, t, n, r, s, o) {
         decodeVideoTexture:
           Oe && x.map.isVideoTexture === !0 && x.map.colorSpace === Ve,
         premultipliedAlpha: x.premultipliedAlpha,
-        doubleSided: x.side === Ot,
+        doubleSided: x.side === Ut,
         flipSided: x.side === _t,
         useDepthPacking: x.depthPacking >= 0,
         depthPacking: x.depthPacking || 0,
@@ -14928,7 +14928,7 @@ function hf(i, e, t, n, r, s, o) {
     const T = g[x.type];
     let Z;
     if (T) {
-      const $ = Ft[T];
+      const $ = Ot[T];
       Z = Kl.clone($.uniforms);
     } else Z = x.uniforms;
     return Z;
@@ -15582,7 +15582,7 @@ function Af(i, e, t) {
     l = new Ef(),
     c = {},
     u = t.maxTextureSize,
-    d = { [on]: _t, [_t]: on, [Ot]: Ot },
+    d = { [on]: _t, [_t]: on, [Ut]: Ut },
     f = new En({
       defines: { VSM_SAMPLES: 8 },
       uniforms: {
@@ -15600,7 +15600,7 @@ function Af(i, e, t) {
     "position",
     new Bt(new Float32Array([-1, -1, 0.5, 3, -1, 0.5, -1, 3, 0.5]), 3)
   );
-  const v = new It(g, f),
+  const v = new Nt(g, f),
     p = this;
   (this.enabled = !1),
     (this.autoUpdate = !0),
@@ -15863,13 +15863,13 @@ function bf(i, e, t) {
       setMask: function (He) {
         re !== He && !w && (i.stencilMask(He), (re = He));
       },
-      setFunc: function (He, Nt, ut) {
-        (O !== He || ne !== Nt || se !== ut) &&
-          (i.stencilFunc(He, Nt, ut), (O = He), (ne = Nt), (se = ut));
+      setFunc: function (He, Ft, ut) {
+        (O !== He || ne !== Ft || se !== ut) &&
+          (i.stencilFunc(He, Ft, ut), (O = He), (ne = Ft), (se = ut));
       },
-      setOp: function (He, Nt, ut) {
-        (Fe !== He || Xe !== Nt || Ke !== ut) &&
-          (i.stencilOp(He, Nt, ut), (Fe = He), (Xe = Nt), (Ke = ut));
+      setOp: function (He, Ft, ut) {
+        (Fe !== He || Xe !== Ft || Ke !== ut) &&
+          (i.stencilOp(He, Ft, ut), (Fe = He), (Xe = Ft), (Ke = ut));
       },
       setLocked: function (He) {
         w = He;
@@ -16116,7 +16116,7 @@ function bf(i, e, t) {
       (x = !1);
   }
   function Ae(w, re) {
-    w.side === Ot ? ve(i.CULL_FACE) : Te(i.CULL_FACE);
+    w.side === Ut ? ve(i.CULL_FACE) : Te(i.CULL_FACE);
     let O = w.side === _t;
     re && (O = !O),
       ye(O),
@@ -16450,8 +16450,8 @@ function wf(i, e, t, n, r, s, o) {
   function b(E) {
     return a
       ? !1
-      : E.wrapS !== Ut ||
-          E.wrapT !== Ut ||
+      : E.wrapS !== Dt ||
+          E.wrapT !== Dt ||
           (E.minFilter !== ft && E.minFilter !== At);
   }
   function C(E, _) {
@@ -16674,7 +16674,7 @@ function wf(i, e, t, n, r, s, o) {
     }
     t.bindTexture(i.TEXTURE_CUBE_MAP, I.__webglTexture, i.TEXTURE0 + _);
   }
-  const oe = { [Hr]: i.REPEAT, [Ut]: i.CLAMP_TO_EDGE, [Vr]: i.MIRRORED_REPEAT },
+  const oe = { [Hr]: i.REPEAT, [Dt]: i.CLAMP_TO_EDGE, [Vr]: i.MIRRORED_REPEAT },
     ce = {
       [ft]: i.NEAREST,
       [vs]: i.NEAREST_MIPMAP_NEAREST,
@@ -16706,7 +16706,7 @@ function wf(i, e, t, n, r, s, o) {
           i.texParameteri(E, i.TEXTURE_WRAP_T, i.CLAMP_TO_EDGE),
           (E === i.TEXTURE_3D || E === i.TEXTURE_2D_ARRAY) &&
             i.texParameteri(E, i.TEXTURE_WRAP_R, i.CLAMP_TO_EDGE),
-          (_.wrapS !== Ut || _.wrapT !== Ut) &&
+          (_.wrapS !== Dt || _.wrapT !== Dt) &&
             console.warn(
               "THREE.WebGLRenderer: Texture is not power of two. Texture.wrapS and Texture.wrapT should be set to THREE.ClampToEdgeWrapping."
             ),
@@ -16907,7 +16907,7 @@ function wf(i, e, t, n, r, s, o) {
             );
           for (let O = 0, ne = Pe.length; O < ne; O++)
             (he = Pe[O]),
-              _.format !== Dt
+              _.format !== It
                 ? fe !== null
                   ? Ge
                     ? t.compressedTexSubImage3D(
@@ -16971,7 +16971,7 @@ function wf(i, e, t, n, r, s, o) {
             t.texStorage2D(i.TEXTURE_2D, re, ue, Pe[0].width, Pe[0].height);
           for (let O = 0, ne = Pe.length; O < ne; O++)
             (he = Pe[O]),
-              _.format !== Dt
+              _.format !== It
                 ? fe !== null
                   ? Ge
                     ? t.compressedTexSubImage2D(
@@ -17155,7 +17155,7 @@ function wf(i, e, t, n, r, s, o) {
           re = B[O].mipmaps;
           for (let ne = 0; ne < re.length; ne++) {
             const se = re[ne];
-            _.format !== Dt
+            _.format !== It
               ? pe !== null
                 ? Pe
                   ? t.compressedTexSubImage2D(
@@ -17797,12 +17797,12 @@ function wf(i, e, t, n, r, s, o) {
           I !== Mn &&
           (I === Ve || I === Ki
             ? a === !1
-              ? e.has("EXT_sRGB") === !0 && Q === Dt
+              ? e.has("EXT_sRGB") === !0 && Q === It
                 ? ((E.format = kr),
                   (E.minFilter = At),
                   (E.generateMipmaps = !1))
                 : (_ = eo.sRGBToLinear(_))
-              : (Q !== Dt || K !== an) &&
+              : (Q !== It || K !== an) &&
                 console.warn(
                   "THREE.WebGLTextures: sRGB encoded textures have to use RGBAFormat and UnsignedByteType."
                 )
@@ -17849,7 +17849,7 @@ function Cf(i, e, t) {
         : ((a = e.get("OES_texture_half_float")),
           a !== null ? a.HALF_FLOAT_OES : null);
     if (s === al) return i.ALPHA;
-    if (s === Dt) return i.RGBA;
+    if (s === It) return i.RGBA;
     if (s === ol) return i.LUMINANCE;
     if (s === ll) return i.LUMINANCE_ALPHA;
     if (s === vn) return i.DEPTH_COMPONENT;
@@ -18329,7 +18329,7 @@ class Df extends Zn {
             (m = new XRWebGLLayer(r, t, H)),
               r.updateRenderState({ baseLayer: m }),
               (h = new Sn(m.framebufferWidth, m.framebufferHeight, {
-                format: Dt,
+                format: It,
                 type: an,
                 colorSpace: e.outputColorSpace,
                 stencilBuffer: v.stencil,
@@ -18351,7 +18351,7 @@ class Df extends Zn {
               (f = d.createProjectionLayer(ce)),
               r.updateRenderState({ layers: [f] }),
               (h = new Sn(f.textureWidth, f.textureHeight, {
-                format: Dt,
+                format: It,
                 type: an,
                 depthTexture: new Uf(
                   f.textureWidth,
@@ -19268,7 +19268,7 @@ class _o {
           I.dispose(),
           w.dispose(),
           w.removeEventListener("sessionstart", He),
-          w.removeEventListener("sessionend", Nt),
+          w.removeEventListener("sessionend", Ft),
           ge && (ge.dispose(), (ge = null)),
           ut.stop();
       });
@@ -19368,14 +19368,14 @@ class _o {
     }),
       (this.compile = function (S, P) {
         function z(D, G, le) {
-          D.transparent === !0 && D.side === Ot && D.forceSinglePass === !1
+          D.transparent === !0 && D.side === Ut && D.forceSinglePass === !1
             ? ((D.side = _t),
               (D.needsUpdate = !0),
               xi(D, G, le),
               (D.side = on),
               (D.needsUpdate = !0),
               xi(D, G, le),
-              (D.side = Ot))
+              (D.side = Ut))
             : xi(D, G, le);
         }
         (p = ee.get(S)),
@@ -19407,7 +19407,7 @@ class _o {
     function He() {
       ut.stop();
     }
-    function Nt() {
+    function Ft() {
       ut.start();
     }
     const ut = new uo();
@@ -19417,7 +19417,7 @@ class _o {
         (Ke = S), w.setAnimationLoop(S), S === null ? ut.stop() : ut.start();
       }),
       w.addEventListener("sessionstart", He),
-      w.addEventListener("sessionend", Nt),
+      w.addEventListener("sessionend", Ft),
       (this.render = function (S, P) {
         if (P !== void 0 && P.isCamera !== !0) {
           console.error(
@@ -19562,7 +19562,7 @@ class _o {
           Ye = Me.geometry,
           je = Me.material,
           yt = Me.group;
-        if (je.side === Ot && be.layers.test(D.layers)) {
+        if (je.side === Ut && be.layers.test(D.layers)) {
           const Gt = je.side;
           (je.side = _t),
             (je.needsUpdate = !0),
@@ -19594,14 +19594,14 @@ class _o {
         S.modelViewMatrix.multiplyMatrices(z.matrixWorldInverse, S.matrixWorld),
         S.normalMatrix.getNormalMatrix(S.modelViewMatrix),
         G.onBeforeRender(M, P, z, D, S, le),
-        G.transparent === !0 && G.side === Ot && G.forceSinglePass === !1
+        G.transparent === !0 && G.side === Ut && G.forceSinglePass === !1
           ? ((G.side = _t),
             (G.needsUpdate = !0),
             M.renderBufferDirect(z, P, D, G, S, le),
             (G.side = on),
             (G.needsUpdate = !0),
             M.renderBufferDirect(z, P, D, G, S, le),
-            (G.side = Ot))
+            (G.side = Ut))
           : M.renderBufferDirect(z, P, D, G, S, le),
         S.onAfterRender(M, P, z, D, G, le);
     }
@@ -19961,7 +19961,7 @@ class _o {
               Ue = Ee.format,
               Me = Ee.type;
             if (
-              Ue !== Dt &&
+              Ue !== It &&
               ue.convert(Ue) !==
                 U.getParameter(U.IMPLEMENTATION_COLOR_READ_FORMAT)
             ) {
@@ -21207,7 +21207,7 @@ class Qf extends Zf {
     );
   }
 }
-class ep extends It {
+class ep extends Nt {
   constructor(e, t, n) {
     const r = new mi(t, 4, 2),
       s = new $i({ wireframe: !0, fog: !1, toneMapped: !1 });
@@ -21317,7 +21317,7 @@ const yn = new nn(),
   rs = new Of();
 jr.colorSpace = Ve;
 const qi = new St(40, window.innerWidth / window.innerHeight, 0.1, 1e3),
-  _i = new _o({ alpha: !0 });
+  _i = new _o({ alpha: !0, antialias: !0 });
 _i.setSize(window.innerWidth, window.innerHeight);
 _i.setPixelRatio(2);
 document.body.appendChild(_i.domElement);
@@ -21330,8 +21330,8 @@ const Kn = 2,
     emissiveMap: jr,
     emissiveIntensity: 1,
   });
-So.side = Ot;
-const sp = new It(rp, So);
+So.side = Ut;
+const sp = new Nt(rp, So);
 yn.add(sp);
 qi.position.set(-1, 1, 5);
 const Yi = new nn();
@@ -21339,7 +21339,7 @@ np.coordinates.forEach((i) => {
   const e = op(Kn, i.lat * -1, i.lon),
     t = new mi(0.02 * Math.random() + 0.005, 16, 16),
     n = new $i({ color: "#7B1BF9" }),
-    r = new It(t, n);
+    r = new Nt(t, n);
   r.position.copy(e), (r.userData = { connectedTo: [] }), Yi.add(r);
 });
 yn.add(Yi);
@@ -21379,8 +21379,11 @@ ss.children.forEach((i) => {
   const r = new vo({
       transparent: !0,
       map: ip,
-      size: 0.01,
+      size: 0.05,
       sizeAttenuation: !0,
+      side: Ut,
+      premultipliedAlpha: !0,
+      alphaToCoverage: !0,
     }),
     s = new zf(t, r);
   gi.add(s);
