@@ -21317,9 +21317,9 @@ const yn = new nn(),
   rs = new Of();
 jr.colorSpace = Ve;
 const qi = new St(40, window.innerWidth / window.innerHeight, 0.1, 1e3),
-  _i = new _o({ alpha: !0, antialias: !0 });
+  _i = new _o({ alpha: !0, antialias: !1 });
 _i.setSize(window.innerWidth, window.innerHeight);
-_i.setPixelRatio(2);
+_i.setPixelRatio(devicePixelRatio);
 document.body.appendChild(_i.domElement);
 const Kn = 2,
   rp = new mi(Kn, 64, 64),
@@ -21368,7 +21368,7 @@ ss.children.forEach((i) => {
     t = new bt();
   t.userData = { curve: e, onCurvePositions: [], onCurveSpeeds: [] };
   let n = [];
-  for (let o = 0; o < Math.round(Math.random() * 15); o++) {
+  for (let o = 0; o < Math.round(Math.random() * 8); o++) {
     const a = Math.random(),
       l = e.getPoint(a);
     n.push(l.x, l.y, l.z),
@@ -21379,7 +21379,7 @@ ss.children.forEach((i) => {
   const r = new vo({
       transparent: !0,
       map: ip,
-      size: 0.05,
+      size: 0.03,
       sizeAttenuation: !0,
       side: Ut,
       premultipliedAlpha: !0,
